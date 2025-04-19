@@ -1,0 +1,490 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{0F08A608-991C-4129-912D-FDF2412E9199}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>GIS</RootNamespace>
+    <AssemblyName>GIS</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Classes\Excel_Dox.cs" />
+    <Compile Include="Classes\GIS_Data.cs" />
+    <Compile Include="EditForms\Entrance_Edit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="EditForms\Entrance_Edit.Designer.cs">
+      <DependentUpon>Entrance_Edit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="EditForms\IPY_Edit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="EditForms\IPY_Edit.Designer.cs">
+      <DependentUpon>IPY_Edit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="EditForms\LS_Edit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="EditForms\LS_Edit.Designer.cs">
+      <DependentUpon>LS_Edit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="EditForms\MKD_Edit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="EditForms\MKD_Edit.Designer.cs">
+      <DependentUpon>MKD_Edit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="EditForms\OPY_Edit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="EditForms\OPY_Edit.Designer.cs">
+      <DependentUpon>OPY_Edit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="EditForms\Owners_Edit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="EditForms\Owners_Edit.Designer.cs">
+      <DependentUpon>Owners_Edit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="EditForms\PD_Edit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="EditForms\PD_Edit.Designer.cs">
+      <DependentUpon>PD_Edit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="EditForms\Penalties_Edit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="EditForms\Penalties_Edit.Designer.cs">
+      <DependentUpon>Penalties_Edit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="EditForms\Premises_Edit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="EditForms\Premises_Edit.Designer.cs">
+      <DependentUpon>Premises_Edit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="EditForms\Premises_LS_Relation_Edit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="EditForms\Premises_LS_Relation_Edit.Designer.cs">
+      <DependentUpon>Premises_LS_Relation_Edit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="EditForms\Services_Edit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="EditForms\Services_Edit.Designer.cs">
+      <DependentUpon>Services_Edit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Entrance_AF.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Entrance_AF.Designer.cs">
+      <DependentUpon>Entrance_AF.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\IPY_AF.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\IPY_AF.Designer.cs">
+      <DependentUpon>IPY_AF.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\LS_AF.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\LS_AF.Designer.cs">
+      <DependentUpon>LS_AF.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\MKD_AF.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\MKD_AF.Designer.cs">
+      <DependentUpon>MKD_AF.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\OPY_AF.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\OPY_AF.Designer.cs">
+      <DependentUpon>OPY_AF.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Owners_AF.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Owners_AF.Designer.cs">
+      <DependentUpon>Owners_AF.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\PD_AF.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\PD_AF.Designer.cs">
+      <DependentUpon>PD_AF.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Penalties_AF.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Penalties_AF.Designer.cs">
+      <DependentUpon>Penalties_AF.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Period_PD_F.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Period_PD_F.Designer.cs">
+      <DependentUpon>Period_PD_F.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Premises_AF.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Premises_AF.Designer.cs">
+      <DependentUpon>Premises_AF.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Premises_LS_Relation_AF.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Premises_LS_Relation_AF.Designer.cs">
+      <DependentUpon>Premises_LS_Relation_AF.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Services_AF.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Services_AF.Designer.cs">
+      <DependentUpon>Services_AF.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Spravka_F.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Spravka_F.Designer.cs">
+      <DependentUpon>Spravka_F.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GISDataSet.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>GISDataSet.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="MainForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MainForm.Designer.cs">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SearchForms\LS_SearchForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SearchForms\LS_SearchForm.Designer.cs">
+      <DependentUpon>LS_SearchForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SearchForms\MKD_SearchForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SearchForms\MKD_SearchForm.Designer.cs">
+      <DependentUpon>MKD_SearchForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SearchForms\PD_SearchForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SearchForms\PD_SearchForm.Designer.cs">
+      <DependentUpon>PD_SearchForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UC\EntranceUC.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UC\EntranceUC.Designer.cs">
+      <DependentUpon>EntranceUC.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UC\LS_UC.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UC\LS_UC.Designer.cs">
+      <DependentUpon>LS_UC.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UC\MKD_UC.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UC\MKD_UC.Designer.cs">
+      <DependentUpon>MKD_UC.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UC\OPY_UC.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UC\OPY_UC.Designer.cs">
+      <DependentUpon>OPY_UC.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UC\Owner_LS_UC.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UC\Owner_LS_UC.Designer.cs">
+      <DependentUpon>Owner_LS_UC.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UC\PD_Dox_UC.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UC\PD_Dox_UC.Designer.cs">
+      <DependentUpon>PD_Dox_UC.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UC\PD_UC.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UC\PD_UC.Designer.cs">
+      <DependentUpon>PD_UC.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UC\Penalties_UC.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UC\Penalties_UC.Designer.cs">
+      <DependentUpon>Penalties_UC.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UC\PremisesUC.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UC\PremisesUC.Designer.cs">
+      <DependentUpon>PremisesUC.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UC\IPY_UC.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UC\IPY_UC.Designer.cs">
+      <DependentUpon>IPY_UC.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UC\Premises_LS_Relation_UC.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UC\Premises_LS_Relation_UC.Designer.cs">
+      <DependentUpon>Premises_LS_Relation_UC.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UC\Services_PD_UC.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UC\Services_PD_UC.Designer.cs">
+      <DependentUpon>Services_PD_UC.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="EditForms\Entrance_Edit.resx">
+      <DependentUpon>Entrance_Edit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="EditForms\IPY_Edit.resx">
+      <DependentUpon>IPY_Edit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="EditForms\LS_Edit.resx">
+      <DependentUpon>LS_Edit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="EditForms\MKD_Edit.resx">
+      <DependentUpon>MKD_Edit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="EditForms\OPY_Edit.resx">
+      <DependentUpon>OPY_Edit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="EditForms\Owners_Edit.resx">
+      <DependentUpon>Owners_Edit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="EditForms\PD_Edit.resx">
+      <DependentUpon>PD_Edit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="EditForms\Penalties_Edit.resx">
+      <DependentUpon>Penalties_Edit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="EditForms\Premises_Edit.resx">
+      <DependentUpon>Premises_Edit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="EditForms\Premises_LS_Relation_Edit.resx">
+      <DependentUpon>Premises_LS_Relation_Edit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="EditForms\Services_Edit.resx">
+      <DependentUpon>Services_Edit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Entrance_AF.resx">
+      <DependentUpon>Entrance_AF.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\IPY_AF.resx">
+      <DependentUpon>IPY_AF.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\LS_AF.resx">
+      <DependentUpon>LS_AF.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\MKD_AF.resx">
+      <DependentUpon>MKD_AF.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\OPY_AF.resx">
+      <DependentUpon>OPY_AF.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Owners_AF.resx">
+      <DependentUpon>Owners_AF.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\PD_AF.resx">
+      <DependentUpon>PD_AF.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Penalties_AF.resx">
+      <DependentUpon>Penalties_AF.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Period_PD_F.resx">
+      <DependentUpon>Period_PD_F.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Premises_AF.resx">
+      <DependentUpon>Premises_AF.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Premises_LS_Relation_AF.resx">
+      <DependentUpon>Premises_LS_Relation_AF.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Services_AF.resx">
+      <DependentUpon>Services_AF.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Spravka_F.resx">
+      <DependentUpon>Spravka_F.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MainForm.resx">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <EmbeddedResource Include="SearchForms\LS_SearchForm.resx">
+      <DependentUpon>LS_SearchForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SearchForms\MKD_SearchForm.resx">
+      <DependentUpon>MKD_SearchForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SearchForms\PD_SearchForm.resx">
+      <DependentUpon>PD_SearchForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UC\EntranceUC.resx">
+      <DependentUpon>EntranceUC.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UC\LS_UC.resx">
+      <DependentUpon>LS_UC.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UC\MKD_UC.resx">
+      <DependentUpon>MKD_UC.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UC\OPY_UC.resx">
+      <DependentUpon>OPY_UC.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UC\Owner_LS_UC.resx">
+      <DependentUpon>Owner_LS_UC.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UC\PD_Dox_UC.resx">
+      <DependentUpon>PD_Dox_UC.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UC\PD_UC.resx">
+      <DependentUpon>PD_UC.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UC\Penalties_UC.resx">
+      <DependentUpon>Penalties_UC.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UC\PremisesUC.resx">
+      <DependentUpon>PremisesUC.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UC\IPY_UC.resx">
+      <DependentUpon>IPY_UC.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UC\Premises_LS_Relation_UC.resx">
+      <DependentUpon>Premises_LS_Relation_UC.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UC\Services_PD_UC.resx">
+      <DependentUpon>Services_PD_UC.cs</DependentUpon>
+    </EmbeddedResource>
+    <None Include="bin\Debug\Templates\Шаблон импорта ЛС-11.13.0.5.xlsx" />
+    <None Include="bin\Debug\Templates\Шаблон импорта сведений о МКД-УО-13.0.1.1.xlsx" />
+    <None Include="bin\Debug\Templates\Шаблон импорта сведений о ПУ-11.13.0.10.xlsx" />
+    <None Include="GISDataSet.xsc">
+      <DependentUpon>GISDataSet.xsd</DependentUpon>
+    </None>
+    <None Include="GISDataSet.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>GISDataSet.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="GISDataSet.xss">
+      <DependentUpon>GISDataSet.xsd</DependentUpon>
+    </None>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <None Include="bin\Debug\Templates\Шаблон ПД.xlsx" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <COMReference Include="Microsoft.Office.Core">
+      <Guid>{2DF8D04C-5BFA-101B-BDE5-00AA0044DE52}</Guid>
+      <VersionMajor>2</VersionMajor>
+      <VersionMinor>8</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>primary</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+    <COMReference Include="Microsoft.Office.Interop.Excel">
+      <Guid>{00020813-0000-0000-C000-000000000046}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>9</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>primary</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+    <COMReference Include="VBIDE">
+      <Guid>{0002E157-0000-0000-C000-000000000046}</Guid>
+      <VersionMajor>5</VersionMajor>
+      <VersionMinor>3</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>primary</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Лупа.png" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
