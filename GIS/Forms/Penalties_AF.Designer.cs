@@ -240,12 +240,12 @@ namespace GIS.Forms
         private GISDataSetTableAdapters.Penalties_And_Court_CostsTableAdapter penalties_And_Court_CostsTableAdapter;
         private GISDataSetTableAdapters.TableAdapterManager tableAdapterManager;
         private System.Windows.Forms.BindingNavigator penalties_And_Court_CostsBindingNavigator;
-        private System.Windows.Forms.ToolStripButton penalties_And_Court_CostsBindingNavigatorSaveItem;
         private System.Windows.Forms.TextBox reason_AccrualTextBox;
         private System.Windows.Forms.TextBox sumTextBox;
         private System.Windows.Forms.ComboBox comboBox1;
         private GISDataSetTableAdapters.Payment_DocumentTableAdapter payment_DocumentTableAdapter;
         private System.Windows.Forms.BindingSource paymentDocumentBindingSource;
         private System.Windows.Forms.ComboBox comboBox2;
+        public System.Windows.Forms.ToolStripButton penalties_And_Court_CostsBindingNavigatorSaveItem;
     }
 }

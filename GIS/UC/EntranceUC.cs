@@ -155,7 +155,7 @@ namespace GIS.UC
                 if (result == DialogResult.Cancel)
                 {
                     GIS_Data.SQLFill(query1, dataGridView1);
-                    GIS_Data.Entrance_ID = 0;
+                    id_entrance = -1;
                 }
             }
             else MessageBox.Show("Укажите запись из таблицы для изменения");
@@ -164,7 +164,7 @@ namespace GIS.UC
         private void Remove_Click(object sender, EventArgs e)
         {
             string queryDelete = "DELETE Entrance WHERE ID = @ID";
-            if(GIS_Data.RemoveClickTemp(GIS_Data.Entrance_ID, queryDelete,false) == true) GIS_Data.SQLFill(query1, dataGridView1);
+            if(GIS_Data.RemoveClickTemp(id_entrance, queryDelete,false,$"Удалить данные подъезда №{entrance_number} для дома: {house_name}") == true) GIS_Data.SQLFill(query1, dataGridView1);
         }
 
         private void Search_Click(object sender, EventArgs e)
@@ -186,6 +186,40 @@ namespace GIS.UC
         private void splitContainer1_SplitterMoved(object sender, SplitterEventArgs e)
         {
 
+        }
+
+        private void dataGridView1_MouseClick(object sender, MouseEventArgs e)
+        {
+            if(e.Button == MouseButtons.Right)
+            {
+                id_house = int.Parse(dataGridView1.Rows[dataGridView1.HitTest(e.X, e.Y).RowIndex].Cells[1].Value.ToString());
+                id_entrance = int.Parse(dataGridView1.Rows[dataGridView1.HitTest(e.X, e.Y).RowIndex].Cells[0].Value.ToString());
+                house_name = dataGridView1.Rows[dataGridView1.HitTest(e.X, e.Y).RowIndex].Cells[2].Value.ToString();
+                entrance_number = dataGridView1.Rows[dataGridView1.HitTest(e.X, e.Y).RowIndex].Cells[3].Value.ToString();
+
+                ContextMenu m = new ContextMenu();
+
+                MenuItem add = new MenuItem();
+                MenuItem edit = new MenuItem();
+                MenuItem remove = new MenuItem();
+
+                add.Text = $"(+) Добавить новый подъезд для дома: {house_name}";
+                edit.Text = $"(=) Изменить данные подъезда №{entrance_number} для дома: {house_name}";                
+                remove.Text = $"(-) Удалить данные подъезда №{entrance_number} для дома: {house_name}";
+
+                add.Click += Add_Click;
+                edit.Click += Edit_Click;
+                remove.Click += Remove_Click;
+
+                if (id_house >= -0)
+                {
+                    m.MenuItems.Add(add);
+                    m.MenuItems.Add(edit);
+                    m.MenuItems.Add(remove);
+                }
+
+                m.Show(dataGridView1, new Point(e.X, e.Y+15));
+            }
         }
     }
 }

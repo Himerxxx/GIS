@@ -50,6 +50,11 @@ namespace GIS
             this.справкаToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.выходToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.свернутьToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.внестиПоказанияToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.индивидуальныеПоказанияToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.внестиToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.просмотрToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.общедомовыеПоказанияToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -71,7 +76,8 @@ namespace GIS
             this.платежныеДокументыToolStripMenuItem,
             this.справкаToolStripMenuItem,
             this.выходToolStripMenuItem,
-            this.свернутьToolStripMenuItem});
+            this.свернутьToolStripMenuItem,
+            this.внестиПоказанияToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(1263, 25);
@@ -92,21 +98,21 @@ namespace GIS
             // мКДToolStripMenuItem
             // 
             this.мКДToolStripMenuItem.Name = "мКДToolStripMenuItem";
-            this.мКДToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.мКДToolStripMenuItem.Size = new System.Drawing.Size(150, 22);
             this.мКДToolStripMenuItem.Text = "МКД";
             this.мКДToolStripMenuItem.Click += new System.EventHandler(this.мКДToolStripMenuItem_Click);
             // 
             // подъездыToolStripMenuItem
             // 
             this.подъездыToolStripMenuItem.Name = "подъездыToolStripMenuItem";
-            this.подъездыToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.подъездыToolStripMenuItem.Size = new System.Drawing.Size(150, 22);
             this.подъездыToolStripMenuItem.Text = "Подъезды";
             this.подъездыToolStripMenuItem.Click += new System.EventHandler(this.подъездыToolStripMenuItem_Click);
             // 
             // помещенияToolStripMenuItem
             // 
             this.помещенияToolStripMenuItem.Name = "помещенияToolStripMenuItem";
-            this.помещенияToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.помещенияToolStripMenuItem.Size = new System.Drawing.Size(150, 22);
             this.помещенияToolStripMenuItem.Text = "Помещения";
             this.помещенияToolStripMenuItem.Click += new System.EventHandler(this.помещенияToolStripMenuItem_Click);
             // 
@@ -174,6 +180,7 @@ namespace GIS
             this.платежныеДокументыToolStripMenuItem.Name = "платежныеДокументыToolStripMenuItem";
             this.платежныеДокументыToolStripMenuItem.Size = new System.Drawing.Size(167, 21);
             this.платежныеДокументыToolStripMenuItem.Text = "Платежные документы";
+            this.платежныеДокументыToolStripMenuItem.Click += new System.EventHandler(this.платежныеДокументыToolStripMenuItem_Click);
             // 
             // пДToolStripMenuItem
             // 
@@ -226,6 +233,45 @@ namespace GIS
             this.свернутьToolStripMenuItem.Text = "Свернуть";
             this.свернутьToolStripMenuItem.Click += new System.EventHandler(this.свернутьToolStripMenuItem_Click);
             // 
+            // внестиПоказанияToolStripMenuItem
+            // 
+            this.внестиПоказанияToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.индивидуальныеПоказанияToolStripMenuItem,
+            this.общедомовыеПоказанияToolStripMenuItem});
+            this.внестиПоказанияToolStripMenuItem.Name = "внестиПоказанияToolStripMenuItem";
+            this.внестиПоказанияToolStripMenuItem.Size = new System.Drawing.Size(131, 21);
+            this.внестиПоказанияToolStripMenuItem.Text = "Внести показания";
+            // 
+            // индивидуальныеПоказанияToolStripMenuItem
+            // 
+            this.индивидуальныеПоказанияToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.внестиToolStripMenuItem,
+            this.просмотрToolStripMenuItem});
+            this.индивидуальныеПоказанияToolStripMenuItem.Name = "индивидуальныеПоказанияToolStripMenuItem";
+            this.индивидуальныеПоказанияToolStripMenuItem.Size = new System.Drawing.Size(249, 22);
+            this.индивидуальныеПоказанияToolStripMenuItem.Text = "Индивидуальные показания";
+            this.индивидуальныеПоказанияToolStripMenuItem.Click += new System.EventHandler(this.индивидуальныеПоказанияToolStripMenuItem_Click);
+            // 
+            // внестиToolStripMenuItem
+            // 
+            this.внестиToolStripMenuItem.Name = "внестиToolStripMenuItem";
+            this.внестиToolStripMenuItem.Size = new System.Drawing.Size(139, 22);
+            this.внестиToolStripMenuItem.Text = "Внести";
+            this.внестиToolStripMenuItem.Click += new System.EventHandler(this.внестиToolStripMenuItem_Click);
+            // 
+            // просмотрToolStripMenuItem
+            // 
+            this.просмотрToolStripMenuItem.Name = "просмотрToolStripMenuItem";
+            this.просмотрToolStripMenuItem.Size = new System.Drawing.Size(139, 22);
+            this.просмотрToolStripMenuItem.Text = "Просмотр";
+            this.просмотрToolStripMenuItem.Click += new System.EventHandler(this.просмотрToolStripMenuItem_Click);
+            // 
+            // общедомовыеПоказанияToolStripMenuItem
+            // 
+            this.общедомовыеПоказанияToolStripMenuItem.Name = "общедомовыеПоказанияToolStripMenuItem";
+            this.общедомовыеПоказанияToolStripMenuItem.Size = new System.Drawing.Size(249, 22);
+            this.общедомовыеПоказанияToolStripMenuItem.Text = "Общедомовые показания";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -250,8 +296,6 @@ namespace GIS
         }
 
         #endregion
-
-        private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem справочникToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem мКДToolStripMenuItem;
@@ -272,6 +316,12 @@ namespace GIS
         private System.Windows.Forms.ToolStripMenuItem выходToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem справкаToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem свернутьToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem внестиПоказанияToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem индивидуальныеПоказанияToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem общедомовыеПоказанияToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem внестиToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem просмотрToolStripMenuItem;
+        public System.Windows.Forms.Panel panel1;
     }
 }
 

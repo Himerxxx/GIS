@@ -13,6 +13,7 @@ namespace GIS.Forms
 {
     public partial class Owners_AF : Form
     {
+        public string save_query, status;
         public Owners_AF()
         {
             InitializeComponent();
@@ -20,9 +21,7 @@ namespace GIS.Forms
 
         private void Owners_AF_Load(object sender, EventArgs e)
         {          
-            passport_DateDateTimePicker.Checked = false;
 
-            CB_Fill();
         }
 
         private void owner_LSBindingNavigatorSaveItem_Click(object sender, EventArgs e)
@@ -53,20 +52,27 @@ namespace GIS.Forms
             {
                 try
                 {
-                    string querySave = "INSERT INTO Owner_LS(FirstName, SecondName, LastName, SNILS, Passport_Type, " +
-                        "Passport_Series, Passport_Number, Passport_Date) " +
-                        $"VALUES({Check_TN(firstNameTextBox)}, {Check_TN(secondNameTextBox)}, {Check_TN(lastNameTextBox)}, " +
-                        $"{Check_M(maskedTextBox1)}, {comboBox1.SelectedIndex}, " +
-                        $"{maskedTextBox2.Text}, {maskedTextBox3.Text}, CONVERT(VARCHAR,{Check_D(passport_DateDateTimePicker)},103))";
-                    
                     using (SqlConnection connection = new SqlConnection(GIS_Data.connectionString))
                     {
                         connection.Open();
-                        SqlCommand command = new SqlCommand(querySave,connection);
+                        SqlCommand command = new SqlCommand(save_query, connection);
+
+                        command.Parameters.AddWithValue("@FirstName", GIS_Data.Check_T(firstNameTextBox));
+                        command.Parameters.AddWithValue("@SecondName", GIS_Data.Check_T(secondNameTextBox));
+                        command.Parameters.AddWithValue("@LastName", GIS_Data.Check_T(lastNameTextBox));
+                        command.Parameters.AddWithValue("@SNILS", GIS_Data.Check_M(maskedTextBox1));
+                        command.Parameters.AddWithValue("@Passport_Type", comboBox1.SelectedIndex);
+                        command.Parameters.AddWithValue("@Passport_Series", maskedTextBox2.Text);
+                        command.Parameters.AddWithValue("@Passport_Number", maskedTextBox3.Text);
+                        command.Parameters.AddWithValue("@Passport_Date", GIS_Data.Check_D(passport_DateDateTimePicker));
+                        command.Parameters.AddWithValue("@OGRN", GIS_Data.Check_T(oGRNTextBox));
+                        command.Parameters.AddWithValue("@NZA", GIS_Data.Check_T(nZATextBox));
+                        command.Parameters.AddWithValue("@KPP", GIS_Data.Check_T(kPPTextBox));
+
                         command.ExecuteNonQuery();
                         connection.Close();
                     }
-                    DialogResult result1 = MessageBox.Show("Запись успешно добавлена", "Успешно", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+                    DialogResult result1 = MessageBox.Show($"Запись успешно {status}", "Успешно", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
                     if (result1 == DialogResult.OK) this.Close();
                 }
                 catch (Exception ex)
@@ -76,31 +82,72 @@ namespace GIS.Forms
                 }            
             }
         }
-        private void CB_Fill()
-        {
-            string[] passType = { "Паспорт гражданина Российской Федерации", "Паспорт гражданина СССР", "Паспорт гражданина иностранного государства", "Общегражданский заграничный паспорт", "Заграничный паспорт Министерства морского флота", "Дипломатический паспорт", "Паспорт моряка (удостоверение личности моряка)", "Военный билет военнослужащего", "Временное удостоверение, выданное взамен военного билета", "Удостоверение личности офицера Министерства обороны Российской Федерации, Министерства внутренних дел Российской Федерации и других воинских формирований с приложением справки о прописке (регистрации) Ф-33", "Свидетельство о рождении", "Свидетельство о рассмотрении ходатайства о признании беженцем на территории Российской Федерации по существу", "Вид на жительство иностранного гражданина или лица без гражданства", "Справка об освобождении из мест лишения свободы", "Временное удостоверение личности гражданина Российской Федерации", "Удостоверение вынужденного переселенца", "Разрешение на временное проживание в Российской Федерации", "Удостоверение беженца в Российской Федерации", "Свидетельство о рассмотрении ходатайства о признании лица вынужденным переселенцем", "Свидетельство о предоставлении временного убежища на территории Российской Федерации", "Иные документы, предусмотренные законодательством Российской Федерации или признаваемые в соответствии с международным договором Российской Федерации в качестве документов, удостоверяющих личность" };
 
-            comboBox1.Items.AddRange(passType);
+        public void Load_Data()
+        {
+            passport_DateDateTimePicker.Checked = false;
+
+            CB_Fill();
         }
 
-        private string Check_C(ComboBox e) => e.SelectedItem == null ? "null" : e.SelectedIndex.ToString();
-
-        private string Check_T(TextBox e) => e.Text == "" ? "null" : e.Text;
-
-        private string Check_TN(TextBox e) => e.Text == "" ? "null" : $"N'{e.Text.Trim()}'";
-
-        private string Check_M(MaskedTextBox e) => e.Text == "" ? "null" : e.Text;
-
-        private string Check_D(DateTimePicker e)
+        public void Load_Data_Edit(int id_owner, string query_load)
         {
-            if (e.Checked == false) return "null";
-            else
+            CB_Fill();
+
+            using (SqlConnection connection = new SqlConnection(GIS_Data.connectionString))
             {
-                string date = e.Value.ToShortDateString().Replace(".","");             
-                return date.Substring(4) + date.Substring(2, 2) + date.Substring(0, 2);
+                connection.Open();
+                SqlCommand command = new SqlCommand(query_load, connection);
+
+                command.Parameters.AddWithValue("@ID", id_owner);
+                SqlDataReader dr = command.ExecuteReader();
+
+                while (dr.Read())
+                {
+                    firstNameTextBox.Text = dr.GetValue(0).ToString();
+                    secondNameTextBox.Text = dr.GetValue(1).ToString();
+                    lastNameTextBox.Text = dr.GetValue(2).ToString();
+                    maskedTextBox1.Text = dr.GetValue(3).ToString();
+                    comboBox1.SelectedIndex = int.Parse(dr.GetValue(4).ToString());
+                    maskedTextBox2.Text = dr.GetValue(5).ToString();
+                    maskedTextBox3.Text = dr.GetValue(6).ToString();
+                    passport_DateDateTimePicker.Value = DateTime.Parse(dr.GetValue(7).ToString().Replace("-", "."));
+                    oGRNTextBox.Text = dr.GetValue(8).ToString();
+                    nZATextBox.Text = dr.GetValue(9).ToString();
+                    kPPTextBox.Text = dr.GetValue(10).ToString();
+
+                    passport_DateDateTimePicker.Checked = true;
+                }
+                connection.Close();
             }
         }
 
+        private void CB_Fill()
+        {
+            string[] passType = { "Паспорт гражданина Российской Федерации", 
+                "Паспорт гражданина СССР", 
+                "Паспорт гражданина иностранного государства", 
+                "Общегражданский заграничный паспорт", 
+                "Заграничный паспорт Министерства морского флота", 
+                "Дипломатический паспорт", 
+                "Паспорт моряка (удостоверение личности моряка)", 
+                "Военный билет военнослужащего", 
+                "Временное удостоверение, выданное взамен военного билета", 
+                "Удостоверение личности офицера МО РФ, МВД РФ и других воинских формирований", 
+                "Свидетельство о рождении", 
+                "Свидетельство о рассмотрении ходатайства о признании беженцем на территории Российской Федерации по существу", 
+                "Вид на жительство иностранного гражданина или лица без гражданства", 
+                "Справка об освобождении из мест лишения свободы", 
+                "Временное удостоверение личности гражданина Российской Федерации", 
+                "Удостоверение вынужденного переселенца", 
+                "Разрешение на временное проживание в Российской Федерации", 
+                "Удостоверение беженца в Российской Федерации", 
+                "Свидетельство о рассмотрении ходатайства о признании лица вынужденным переселенцем", 
+                "Свидетельство о предоставлении временного убежища на территории Российской Федерации", 
+                "Иные документы, удостоверяющие личность" };
+
+            comboBox1.Items.AddRange(passType);
+        }
 
         private void maskedTextBox1_Click(object sender, EventArgs e)
         {

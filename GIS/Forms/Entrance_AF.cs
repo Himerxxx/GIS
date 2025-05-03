@@ -16,9 +16,8 @@ namespace GIS.Forms
         //public int id;
         //public string load_query;
         //public string save_query;
-        public string status;
-
-        public string save_query;
+        public string status, save_query;
+        
         public Entrance_AF()
         {
             InitializeComponent();
@@ -83,9 +82,9 @@ namespace GIS.Forms
                 SqlDataAdapter da = new SqlDataAdapter(cmd1);
                 da.Fill(dt);
 
-                this.comboBox1.DataSource = dt;
-                this.comboBox1.ValueMember = "ID";//столбец с id
-                this.comboBox1.DisplayMember = "Address";// столбец для отображения
+                comboBox1.DataSource = dt;
+                comboBox1.ValueMember = "ID";//столбец с id
+                comboBox1.DisplayMember = "Address";// столбец для отображения
             }
 
             using (SqlConnection connection = new SqlConnection(GIS_Data.connectionString))

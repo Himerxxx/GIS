@@ -15,7 +15,7 @@ namespace GIS.UC
 {
     public partial class Premises_LS_Relation_UC : UserControl
     {
-        string query1 = "SELECT pl.ID_LS," +
+        string query_load = "SELECT pl.ID_LS," +
                 "pl.ID_Premises," +
                 "o.SecondName + ' ' + " +
                 "o.FirstName + ' ' + " +
@@ -34,6 +34,7 @@ namespace GIS.UC
             "JOIN Owner_LS o ON o.ID = l.ID_Owner " +
             "JOIN Characteristic_MKD m ON m.ID = p.ID_MKD_Address " +
             "JOIN Address_Book a ON a.ID = m.ID_Address";
+        int id_premises, id_ls;
         public Premises_LS_Relation_UC()
         {
             InitializeComponent();
@@ -41,7 +42,7 @@ namespace GIS.UC
 
         private void Premises_LS_Relation_UC_Load(object sender, EventArgs e)
         {
-            GIS_Data.SQLFill(query1, dataGridView1);
+            GIS_Data.SQLFill(query_load, dataGridView1);
 
             splitContainer1.Size = new Size(1233, 394);
             
@@ -93,41 +94,41 @@ namespace GIS.UC
             var form = new Premises_LS_Relation_AF();
             DialogResult result = form.ShowDialog();
             if (result == DialogResult.Cancel)
-                GIS_Data.SQLFill(query1, dataGridView1);
+                GIS_Data.SQLFill(query_load, dataGridView1);
         }
 
         private void Remove_Click(object sender, EventArgs e)
         {
             string queryDelete = "DELETE Premises_LS_Relations " +
                         "WHERE ID_LS = @ID AND ID_Premises = @secID";
-            if(GIS_Data.RemoveClickTemp(GIS_Data.ID, queryDelete, true) == true) GIS_Data.SQLFill(query1, dataGridView1);
+            if (GIS_Data.RemoveClickTemp(id_ls, queryDelete, true, $"") == true) GIS_Data.SQLFill(query_load, dataGridView1);
         }
 
         private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             try
             {
-                GIS_Data.ID = int.Parse(dataGridView1.Rows[e.RowIndex].Cells[0].Value.ToString());
-                GIS_Data.secID = int.Parse(dataGridView1.Rows[e.RowIndex].Cells[1].Value.ToString());
+                id_ls = int.Parse(dataGridView1.Rows[e.RowIndex].Cells[0].Value.ToString());
+                id_premises = int.Parse(dataGridView1.Rows[e.RowIndex].Cells[1].Value.ToString());
             }
             catch
             {
-                GIS_Data.ID = -1;
-                GIS_Data.secID = -1;
+                id_ls = -1;
+                id_premises = -1;
             }
         }
 
         private void Edit_Click(object sender, EventArgs e)
         {
-            if (GIS_Data.ID > 0)
+            if (id_ls > 0)
             {
                 var form = new Premises_LS_Relation_Edit();
                 DialogResult result = form.ShowDialog();
                 if (result == DialogResult.Cancel)
                 {
-                    GIS_Data.SQLFill(query1, dataGridView1);
-                    GIS_Data.ID = 0;
-                    GIS_Data.secID = 0;
+                    GIS_Data.SQLFill(query_load, dataGridView1);
+                    id_ls = 0;
+                    id_premises = 0;
                 }
             }
             else MessageBox.Show("Укажите запись из таблицы для изменения");
@@ -152,8 +153,8 @@ namespace GIS.UC
                 GIS_Data.LS_Dox_Fill(id);
             }
             else MessageBox.Show("Укажите запись из таблицы для заполнения", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Stop);
-            GIS_Data.ID = 0;
-            GIS_Data.secID = 0;
+            id_ls = 0;
+            id_premises = 0;
             i = 0;
         }
 
@@ -165,12 +166,12 @@ namespace GIS.UC
         private void button6_Click(object sender, EventArgs e)
         {
             textBox1.Text = "";
-            GIS_Data.SQLFill(query1, dataGridView1);
+            GIS_Data.SQLFill(query_load, dataGridView1);
         }
 
         private void textBox1_KeyDown(object sender, KeyEventArgs e)
         {
-            GIS_Data.SearchBind(textBox1, dataGridView1, query1,e);
+            GIS_Data.SearchBind(textBox1, dataGridView1, query_load,e);
         }
     }
 }

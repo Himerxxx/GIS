@@ -15,11 +15,12 @@ namespace GIS.UC
 {
     public partial class Owner_LS_UC : UserControl
     {
-        string query1 = "SELECT ID, SecondName + ' ' + FirstName + ' ' + LastName AS 'ФИО', SNILS AS 'СНИЛС', " +
+        string query_load = "SELECT ID, SecondName + ' ' + FirstName + ' ' + LastName AS 'ФИО', SNILS AS 'СНИЛС', " +
            "Passport_Type AS 'Документ удостоверяющий личность', Passport_Series + ' ' + Passport_Number AS 'Серия номер', Passport_Date AS 'Дата получения ДУЛ', OGRN AS 'ОГРН', NZA AS 'НЗА', KPP AS 'КПП' " +
            "FROM Owner_LS " +
            "ORDER BY SecondName";
-        int id;
+        int id_owner;
+        string owner_name;
         public Owner_LS_UC()
         {
             InitializeComponent();
@@ -27,7 +28,7 @@ namespace GIS.UC
 
         private void Owner_LS_UC_Load(object sender, EventArgs e)
         {
-            GIS_Data.SQLFill(query1, dataGridView1);
+            GIS_Data.SQLFill(query_load, dataGridView1);
 
             splitContainer1.Size = new Size(1233, 394);
             
@@ -72,24 +73,52 @@ namespace GIS.UC
 
         private void Add_Click(object sender, EventArgs e)
         {
-            var form = new Owners_AF();
-            DialogResult result = form.ShowDialog();
+            Add_Func();
+        }
+
+        public void Add_Func()
+        {
+            var owners = new Owners_AF() { Text = $"Добавление нового владельца." };
+            owners.Load_Data();
+            owners.save_query = "INSERT INTO Owner_LS(FirstName, SecondName, LastName, SNILS, Passport_Type, " +
+                        "Passport_Series, Passport_Number, Passport_Date) " +
+                        $"VALUES(@FirstName, @SecondName, @LastName, " +
+                        $"@SNILS, @Passport_Type, " +
+                        $"@Passport_Series, @Passport_Number, CONVERT(VARCHAR,@Passport_Date,103))";
+            owners.status = "добавлена";
+            owners.owner_LSBindingNavigatorSaveItem.Text = "Сохранить данные";
+            DialogResult result = owners.ShowDialog();
             if (result == DialogResult.Cancel)
-                GIS_Data.SQLFill(query1, dataGridView1);
+                GIS_Data.SQLFill(query_load, dataGridView1);        
         }
 
         private void Edit_Click(object sender, EventArgs e)
         {
-            if (id > 0)
+            string query_load_edit = "SELECT FirstName, SecondName, LastName, SNILS, Passport_Type, Passport_Series, " +
+                "Passport_Number, Passport_Date, OGRN, NZA, KPP FROM Owner_LS o " +
+                $"WHERE o.ID = {id_owner}";
+
+            if (id_owner > -1)
             {
-                var form = new Owners_Edit();
-                form.id = id;
-                DialogResult result = form.ShowDialog();
+                var owners = new Owners_AF() { Text = $"Изменение данных владельца: {owner_name}." };
+
+                owners.Load_Data_Edit(id_owner, query_load_edit);
+                owners.save_query = $"UPDATE Owner_LS SET FirstName = @FirstName, " +
+                    $"SecondName = @SecondName, LastName = @LastName, " +
+                    $"SNILS = @SNILS, Passport_Type = @Passport_Type, Passport_Series = @Passport_Series, " +
+                    $"Passport_Number = @Passport_Number, Passport_Date = @Passport_Date, " +
+                    $"OGRN = @OGRN, NZA = @NZA, KPP = @KPP " +
+                    $"WHERE ID = {id_owner}";
+                owners.status = "изменена";
+                owners.owner_LSBindingNavigatorSaveItem.Text = "Изменить данные";
+
+                DialogResult result = owners.ShowDialog();
+
                 if (result == DialogResult.Cancel)
                 {
-                    GIS_Data.SQLFill(query1, dataGridView1);
-                    id = 0;
-                }                    
+                    GIS_Data.SQLFill(query_load, dataGridView1);
+                    id_owner = -1;
+                }
             }
             else MessageBox.Show("Укажите запись из таблицы для изменения");
 
@@ -99,18 +128,19 @@ namespace GIS.UC
         {
             try
             {
-                id = int.Parse(dataGridView1.Rows[e.RowIndex].Cells[0].Value.ToString());
+                id_owner = int.Parse(dataGridView1.Rows[e.RowIndex].Cells[0].Value.ToString());
+                owner_name = dataGridView1.Rows[e.RowIndex].Cells[1].Value.ToString();
             }
             catch
             {
-                id = -1;
+                id_owner = -1;
             }
         }
 
         private void Remove_Click(object sender, EventArgs e)
         {
             string queryDelete = "DELETE Owner_LS WHERE ID = @ID";
-            if (GIS_Data.RemoveClickTemp(id, queryDelete, false) == true) GIS_Data.SQLFill(query1, dataGridView1);
+            if (GIS_Data.RemoveClickTemp(id_owner, queryDelete, false, $"Удалить данные владельца: {owner_name}?") == true) GIS_Data.SQLFill(query_load, dataGridView1);
 
         }
 
@@ -122,12 +152,12 @@ namespace GIS.UC
         private void button5_Click(object sender, EventArgs e)
         {
             textBox1.Text = "";
-            GIS_Data.SQLFill(query1, dataGridView1);
+            GIS_Data.SQLFill(query_load, dataGridView1);
         }
 
         private void textBox1_KeyDown(object sender, KeyEventArgs e)
         {
-            GIS_Data.SearchBind(textBox1, dataGridView1, query1, e);
+            GIS_Data.SearchBind(textBox1, dataGridView1, query_load, e);
         }
     }
 }

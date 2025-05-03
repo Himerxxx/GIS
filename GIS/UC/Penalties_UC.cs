@@ -15,9 +15,11 @@ namespace GIS.UC
 {
     public partial class Penalties_UC : UserControl
     {
-        string query1 = "SELECT p.ID, pd.ID AS 'Номер ПД', p.Type_Accrual AS 'Вид начисления', p.Reason_Accrual AS 'Основания начислений', p.Sum AS 'Сумма' " +
+        string query_load = "SELECT p.ID, CONVERT(NVARCHAR,pd.Calculation_Period,103) + '-' + CONVERT(NVARCHAR,p.ID) AS 'Номер ПД', p.Type_Accrual AS 'Вид начисления', p.Reason_Accrual AS 'Основания начислений', p.Sum AS 'Сумма' " +
            "FROM Penalties_And_Court_Costs p " +
            "JOIN Payment_Document pd ON pd.ID = p.ID_PD_Number";
+        string pd_name;
+        int id_penaltie;
         public Penalties_UC()
         {
             InitializeComponent();
@@ -25,7 +27,7 @@ namespace GIS.UC
 
         private void Penalties_UC_Load(object sender, EventArgs e)
         {
-            GIS_Data.SQLFill(query1, dataGridView1);
+            GIS_Data.SQLFill(query_load, dataGridView1);
 
             splitContainer1.Size = new Size(1233, 394);
             
@@ -68,35 +70,71 @@ namespace GIS.UC
 
         private void Add_Click(object sender, EventArgs e)
         {
-            var form = new Penalties_AF();
-            DialogResult result = form.ShowDialog();
+            string query_load_CB = "SELECT pd.ID AS 'ID', CONVERT(NVARCHAR,pd.Calculation_Period,103) + '-' + CONVERT(NVARCHAR,p.ID) AS 'PD_Key' " +
+                "FROM Penalties_And_Court_Costs p " +
+                "JOIN Payment_Document pd ON pd.ID = p.ID_PD_Number " +
+                "WHERE p.ID = @ID";
+
+            var penalties = new Penalties_AF() { Text = $"Добавление новых судебных неустоек. {pd_name}" };
+            penalties.Load_Data(Add_Func(query_load_CB));
+            penalties.save_query = "INSERT INTO Penalties_And_Court_Costs(ID_PD_Number, Type_Accrual, Reason_Accrual, Sum) " +
+                    $"VALUES(@ID_PD_Number, @Type_Accrual, @Reason_Accrual, @Sum)";
+            penalties.status = "добавлена";
+            penalties.penalties_And_Court_CostsBindingNavigatorSaveItem.Text = "Сохранить данные";
+            DialogResult result = penalties.ShowDialog();
             if (result == DialogResult.Cancel)
-                GIS_Data.SQLFill(query1, dataGridView1);
+                GIS_Data.SQLFill(query_load, dataGridView1);
+        }
+
+        private DataTable Add_Func(string query)
+        {
+            DataTable dt = new DataTable();
+            using (SqlConnection connection = new SqlConnection(GIS_Data.connectionString))
+            {
+                SqlCommand cmd = new SqlCommand(query, connection);
+                cmd.Parameters.AddWithValue("@ID", id_penaltie);
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                da.Fill(dt);
+                return dt;
+            }
         }
 
         private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             try
             {
-                GIS_Data.ID = int.Parse(dataGridView1.Rows[e.RowIndex].Cells[0].Value.ToString());
+                id_penaltie = int.Parse(dataGridView1.Rows[e.RowIndex].Cells[0].Value.ToString());
+                pd_name = dataGridView1.Rows[e.RowIndex].Cells[1].Value.ToString();
             }
             catch
             {
-                GIS_Data.ID = -1;
+                id_penaltie = -1;
             }
         }
 
         private void Edit_Click(object sender, EventArgs e)
         {
-            if (GIS_Data.ID > 0)
+            string query_load_CB = "SELECT pd.ID AS 'ID', CONVERT(NVARCHAR,pd.Calculation_Period,103) + '-' + CONVERT(NVARCHAR,p.ID) AS 'PD_Key' " +
+                "FROM Penalties_And_Court_Costs p " +
+                "JOIN Payment_Document pd ON pd.ID = p.ID_PD_Number " +
+                "WHERE p.ID = @ID";
+
+            string query_load_edit = "SELECT Type_Accrual, Reason_Accrual, Sum FROM Penalties_And_Court_Costs p " +
+                "WHERE p.ID = @ID";
+
+            if (id_penaltie > -1)
             {
-                var form = new Penalties_Edit();
-                DialogResult result = form.ShowDialog();
+                var penalties = new Penalties_AF() { Text = $"Изменение записи судебных неустоек. {pd_name}" };
+                penalties.Load_Data_Edit(Add_Func(query_load_CB), query_load_edit, id_penaltie);
+                penalties.save_query = $"UPDATE Penalties_And_Court_Costs SET ID_PD_Number = @ID_PD_Number, " +
+                        $"Type_Accrual = @Type_Accrual, Reason_Accrual = @Reason_Accrual, " +
+                        $"Sum = @Sum " +
+                        $"WHERE ID = {id_penaltie}";
+                penalties.status = "изменена";
+                penalties.penalties_And_Court_CostsBindingNavigatorSaveItem.Text = "Изменить данные";
+                DialogResult result = penalties.ShowDialog();
                 if (result == DialogResult.Cancel)
-                {
-                    GIS_Data.SQLFill(query1, dataGridView1);
-                    GIS_Data.ID = 0;
-                }
+                    GIS_Data.SQLFill(query_load, dataGridView1);
             }
             else MessageBox.Show("Укажите запись из таблицы для изменения");
         }
@@ -104,7 +142,7 @@ namespace GIS.UC
         private void Remove_Click(object sender, EventArgs e)
         {
             string queryDelete = "DELETE Penalties_And_Court_Costs WHERE ID = @ID";
-            if (GIS_Data.RemoveClickTemp(GIS_Data.ID, queryDelete, false) == true) GIS_Data.SQLFill(query1, dataGridView1);
+            if (GIS_Data.RemoveClickTemp(id_penaltie, queryDelete, false, $"Удалить запись судебных неустоек, платежного документа: {pd_name}?") == true) GIS_Data.SQLFill(query_load, dataGridView1);
         }
 
         private void button4_Click(object sender, EventArgs e)
@@ -115,12 +153,12 @@ namespace GIS.UC
         private void button5_Click(object sender, EventArgs e)
         {
             textBox1.Text = "";
-            GIS_Data.SQLFill(query1, dataGridView1);
+            GIS_Data.SQLFill(query_load, dataGridView1);
         }
 
         private void textBox1_KeyDown(object sender, KeyEventArgs e)
         {
-            GIS_Data.SearchBind(textBox1, dataGridView1, query1, e);
+            GIS_Data.SearchBind(textBox1, dataGridView1, query_load, e);
         }
     }
 }

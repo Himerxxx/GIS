@@ -14,6 +14,7 @@ namespace GIS.Forms
     public partial class OPY_AF : Form
     {
         public int id;
+        public string status, save_query;
         public OPY_AF()
         {
             InitializeComponent();
@@ -53,7 +54,7 @@ namespace GIS.Forms
             {
                 try
                 {
-                    string querySave = "INSERT INTO General_Metering_Device(ID_MKD_Address, Serial_Number, Type_PY, Mark_PY, Model_PY, Is_Distance_Check, Name_DIstance_PY," +
+                    /*string querySave = "INSERT INTO General_Metering_Device(ID_MKD_Address, Serial_Number, Type_PY, Mark_PY, Model_PY, Is_Distance_Check, Name_DIstance_PY," +
                         "Is_Many_PY_Used, Place_Location_PY, GIS_Number_PY_To_Connect, Type_Kommunal_Res, Unit_Measurement_PY, Type_PU_Number_Tariffs," +
                         "T1, T2, T3, Trans_Coef, Installation_Date, Operation_Date, Last_Check_Date, Plomb_PU_Date, Is_Temperature_Sensors, Temperature_Sensors_Info," +
                         "Is_Pressure_Sensors, Pressure_Sensors_Info, Is_AutomaticCalculation) " +
@@ -69,17 +70,46 @@ namespace GIS.Forms
                         $"CONVERT(VARCHAR,{Check_D(plomb_PU_DateDateTimePicker)}, 103)," +
                         $"{comboBox7.SelectedIndex}, {Check_T(temperature_Sensors_InfoTextBox)}," +
                         $"{comboBox8.SelectedIndex}, {Check_T(pressure_Sensors_InfoTextBox)}," +
-                        $"{Check_C(comboBox9)})";
+                        $"{Check_C(comboBox9)})";*/
 
                     using (SqlConnection connection = new SqlConnection(GIS_Data.connectionString))
                     {
                         connection.Open();
-                        SqlCommand command = new SqlCommand(querySave);
+                        SqlCommand command = new SqlCommand(save_query);
+
+                        command.Parameters.AddWithValue("@ID_MKD_Address", SqlDbType.Int).Value = comboBox10.SelectedValue;
+                        command.Parameters.AddWithValue("@Serial_Number", SqlDbType.NVarChar).Value = serial_NumberTextBox.Text ; 
+                        command.Parameters.AddWithValue("@Type_PY", SqlDbType.TinyInt).Value = comboBox1.SelectedIndex;  
+                        command.Parameters.AddWithValue("@Mark_PY", GIS_Data.Check_T(mark_PYTextBox));
+                        command.Parameters.AddWithValue("@Model_PY", GIS_Data.Check_T(model_PYTextBox));
+                        command.Parameters.AddWithValue("@Is_Distance_Check", comboBox2.SelectedIndex);
+                        command.Parameters.AddWithValue("@Name_DIstance_PY", GIS_Data.Check_T(name_DIstance_PYTextBox));
+                        command.Parameters.AddWithValue("@Is_Many_PY_Used", comboBox3.SelectedIndex);
+                        command.Parameters.AddWithValue("@Place_Location_PY", GIS_Data.Check_C(comboBox4)); 
+                        command.Parameters.AddWithValue("@GIS_Number_PY_To_Connect", GIS_Data.Check_T(gIS_Number_PY_To_ConnectTextBox));
+                        command.Parameters.AddWithValue("@Type_Kommunal_Res", comboBox5.SelectedIndex);
+                        command.Parameters.AddWithValue("@Unit_Measurement_PY", GIS_Data.Check_T(unit_Measurement_PYTextBox));
+                        command.Parameters.AddWithValue("@Type_PU_Number_Tariffs",  GIS_Data.Check_C(comboBox6)); 
+                        command.Parameters.AddWithValue("@T1", GIS_Data.Check_TD(t1TextBox));
+                        command.Parameters.AddWithValue("@T2", GIS_Data.Check_TD(t2TextBox));
+                        command.Parameters.AddWithValue("@T3", GIS_Data.Check_TD(t3TextBox));
+                        command.Parameters.AddWithValue("@Trans_Coef", GIS_Data.Check_TD(trans_CoefTextBox));                       
+                        command.Parameters.AddWithValue("@Installation_Date", GIS_Data.Check_D(installation_DateDateTimePicker));
+                        command.Parameters.AddWithValue("@Operation_Date", GIS_Data.Check_D(operation_DateDateTimePicker));
+                        command.Parameters.AddWithValue("@Last_Check_Date", GIS_Data.Check_D(last_Check_DateDateTimePicker));
+                        command.Parameters.AddWithValue("@Plomb_PU_Date", GIS_Data.Check_D(plomb_PU_DateDateTimePicker));                       
+                        command.Parameters.AddWithValue("@Is_Temperature_Sensors", comboBox7.SelectedIndex);
+                        command.Parameters.AddWithValue("@Temperature_Sensors_Info", GIS_Data.Check_T(temperature_Sensors_InfoTextBox)); 
+                        command.Parameters.AddWithValue("@Is_Pressure_Sensors", comboBox8.SelectedIndex);
+                        command.Parameters.AddWithValue("@Pressure_Sensors_Info", GIS_Data.Check_T(pressure_Sensors_InfoTextBox)); 
+                        command.Parameters.AddWithValue("@Is_AutomaticCalculation", GIS_Data.Check_C(comboBox9)); 
+                        command.Parameters.AddWithValue("@Unique_GIS_Number", GIS_Data.Check_T(unique_GIS_NumberTextBox)); 
+
                         command.Connection = connection;
                         command.ExecuteNonQuery();
                         connection.Close();
                     }
-                    DialogResult result1 = MessageBox.Show("Запись успешно добавлена", "Успешно", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+                    DialogResult result1 = MessageBox.Show($"Запись успешно {status}", "Успешно", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
                     if (result1 == DialogResult.OK) this.Close();
                 }
                 catch (Exception ex)
@@ -89,37 +119,11 @@ namespace GIS.Forms
 
             }
         }
-        private void Load_Data()
+        public void Load_Data(DataTable dt)
         {
-            string query = "SELECT m.ID, a.Type_Street + ' ' + a.Street + ' ' + m.House_Number AS 'Address' FROM Characteristic_MKD m " +
-                "JOIN Address_Book a ON a.ID = m.ID_Address " +
-                "WHERE m.ID = @ID";
-
-            using (SqlConnection connection = new SqlConnection(GIS_Data.connectionString))
-            {
-                SqlCommand cmd = new SqlCommand(query, connection);
-                cmd.Parameters.AddWithValue("@ID", id);
-                DataTable dt = new DataTable();
-                SqlDataAdapter da = new SqlDataAdapter(cmd);
-                da.Fill(dt);
-
-                comboBox10.DataSource = dt;
-                comboBox10.ValueMember = "ID";
-                comboBox10.DisplayMember = "Address";
-            }
-        }
-
-        private void OPY_AF_Load(object sender, EventArgs e)
-        {
-            if (id != 0)
-            {
-                Load_Data();
-            }
-            else
-            {
-                this.view_Address_MKDTableAdapter.Fill(this.gISDataSet.View_Address_MKD);
-                comboBox10.SelectedItem = null;
-            }
+            comboBox10.DataSource = dt;
+            comboBox10.ValueMember = "ID";
+            comboBox10.DisplayMember = "Address";
 
             installation_DateDateTimePicker.Checked = false;
             operation_DateDateTimePicker.Checked = false;
@@ -127,6 +131,75 @@ namespace GIS.Forms
             plomb_PU_DateDateTimePicker.Checked = false;
 
             CB_Fill();
+        }
+
+        public void Load_Data_Edit(DataTable dt, int id_opy, string query_load)
+        {
+
+            comboBox10.DataSource = dt;
+            comboBox10.ValueMember = "ID";
+            comboBox10.DisplayMember = "Address";
+
+            CB_Fill();
+
+            using (SqlConnection connection = new SqlConnection(GIS_Data.connectionString))
+            {
+                connection.Open();
+                SqlCommand command = new SqlCommand(query_load, connection);
+
+                command.Parameters.AddWithValue("@ID", id_opy);
+                SqlDataReader dr = command.ExecuteReader();
+
+                while (dr.Read())
+                {
+                    comboBox10.SelectedValue = dr.GetValue(26);
+                    serial_NumberTextBox.Text = dr.GetValue(0).ToString();
+                    comboBox1.SelectedIndex = int.Parse(dr.GetValue(1).ToString());
+                    mark_PYTextBox.Text = dr.GetValue(2).ToString();
+                    model_PYTextBox.Text = dr.GetValue(3).ToString();
+                    comboBox2.SelectedIndex = dr.GetValue(4).ToString() == "False" ? 0 : 1;
+                    name_DIstance_PYTextBox.Text = dr.GetValue(5).ToString();
+                    comboBox3.SelectedIndex = dr.GetValue(6).ToString() == "False" ? 0 : 1;
+                    if (dr.GetValue(7).ToString() == "")
+                        comboBox4.SelectedItem = null;
+                    else comboBox4.SelectedIndex = int.Parse(dr.GetValue(7).ToString());
+                    gIS_Number_PY_To_ConnectTextBox.Text = dr.GetValue(8).ToString();
+                    comboBox5.SelectedIndex = int.Parse(dr.GetValue(9).ToString());
+                    unit_Measurement_PYTextBox.Text = dr.GetValue(10).ToString();
+                    if (dr.GetValue(11).ToString() == "")
+                        comboBox6.SelectedItem = null;
+                    else comboBox6.SelectedIndex = int.Parse(dr.GetValue(11).ToString());
+                    t1TextBox.Text = dr.GetValue(12).ToString();
+                    t2TextBox.Text = dr.GetValue(13).ToString();
+                    t3TextBox.Text = dr.GetValue(14).ToString();
+                    trans_CoefTextBox.Text = dr.GetValue(15).ToString();
+                    if (dr.GetValue(16).ToString() == "")
+                        installation_DateDateTimePicker.Checked = false;
+                    else installation_DateDateTimePicker.Value = DateTime.Parse(dr.GetValue(16).ToString().Replace("-", "."));
+                    operation_DateDateTimePicker.Value = DateTime.Parse(dr.GetValue(17).ToString().Replace("-", "."));
+                    if (dr.GetValue(18).ToString() == "")
+                        last_Check_DateDateTimePicker.Checked = false;
+                    else last_Check_DateDateTimePicker.Value = DateTime.Parse(dr.GetValue(18).ToString().Replace("-", "."));
+                    plomb_PU_DateDateTimePicker.Value = DateTime.Parse(dr.GetValue(19).ToString().Replace("-", "."));
+                    comboBox7.SelectedIndex = dr.GetValue(20).ToString() == "False" ? 0 : 1;
+                    temperature_Sensors_InfoTextBox.Text = dr.GetValue(21).ToString();
+                    comboBox8.SelectedIndex = dr.GetValue(22).ToString() == "False" ? 0 : 1;
+                    pressure_Sensors_InfoTextBox.Text = dr.GetValue(23).ToString();
+                    comboBox9.SelectedIndex = dr.GetValue(24).ToString() == "False" ? 0 : 1;
+                    unique_GIS_NumberTextBox.Text = dr.GetValue(25).ToString();
+
+                    installation_DateDateTimePicker.Checked = true;
+                    operation_DateDateTimePicker.Checked = true;
+                    last_Check_DateDateTimePicker.Checked = true;
+                    plomb_PU_DateDateTimePicker.Checked = true;
+                }
+                connection.Close();
+            }
+        }
+
+        private void OPY_AF_Load(object sender, EventArgs e)
+        {
+
         }
 
         private void CB_Fill()
@@ -146,25 +219,6 @@ namespace GIS.Forms
             comboBox7.Items.AddRange(yesno);
             comboBox8.Items.AddRange(yesno);
             comboBox9.Items.AddRange(yesno);            
-        }
-        private string Check_C(ComboBox e) => e.SelectedItem == null ? "null" : e.SelectedIndex.ToString();
-
-        private string Check_T(TextBox e) => e.Text == "" ? "null" : e.Text;
-
-        private string Check_TD(TextBox e) => e.Text == "" ? "null" : e.Text.Replace(",", ".");
-
-        private string Check_TN(TextBox e) => e.Text == "" ? "null" : $"N'{e.Text}'";
-
-        private string Check_M(MaskedTextBox e) => e.Text == "" ? "null" : e.Text;
-
-        private string Check_D(DateTimePicker e)
-        {
-            if (e.Checked == false) return "null";
-            else
-            {
-                string date = e.Value.ToShortDateString().Replace(".", "");
-                return date.Substring(4) + date.Substring(2, 2) + date.Substring(0, 2);
-            }
         }
     }
 }

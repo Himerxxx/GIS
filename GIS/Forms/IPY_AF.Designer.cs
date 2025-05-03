@@ -827,7 +827,6 @@ namespace GIS.Forms
         private GISDataSetTableAdapters.Metering_DevicesTableAdapter metering_DevicesTableAdapter;
         private GISDataSetTableAdapters.TableAdapterManager tableAdapterManager;
         private System.Windows.Forms.BindingNavigator metering_DevicesBindingNavigator;
-        private System.Windows.Forms.ToolStripButton metering_DevicesBindingNavigatorSaveItem;
         private System.Windows.Forms.TextBox serial_NumberTextBox;
         private System.Windows.Forms.TextBox mark_PYTextBox;
         private System.Windows.Forms.TextBox model_PYTextBox;
@@ -862,5 +861,6 @@ namespace GIS.Forms
         private System.Windows.Forms.ComboBox comboBox11;
         private System.Windows.Forms.BindingSource viewLSBindingSource;
         private GISDataSetTableAdapters.View_LSTableAdapter view_LSTableAdapter;
+        public System.Windows.Forms.ToolStripButton metering_DevicesBindingNavigatorSaveItem;
     }
 }

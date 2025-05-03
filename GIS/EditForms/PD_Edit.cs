@@ -23,7 +23,7 @@ namespace GIS.EditForms
         {
             CB_Fill();            
 
-            this.view_Address_Premises_For_PDTableAdapter.Fill(this.gISDataSet.View_Address_Premises_For_PD);
+            //this.view_Address_Premises_For_PDTableAdapter.Fill(this.gISDataSet.View_Address_Premises_For_PD);
 
             PD_Load_Data();
             //comboBox1.SelectedItem = null;

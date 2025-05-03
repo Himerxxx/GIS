@@ -57,6 +57,7 @@ namespace GIS.UC
             this.dataGridView1.Size = new System.Drawing.Size(967, 336);
             this.dataGridView1.TabIndex = 0;
             this.dataGridView1.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellClick);
+            this.dataGridView1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.dataGridView1_MouseClick);
             // 
             // button1
             // 

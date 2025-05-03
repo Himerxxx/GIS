@@ -15,7 +15,10 @@ namespace GIS.UC
 {
     public partial class IPY_UC : UserControl
     {
-        string query1 = "SELECT py.ID, a.Type_Street + ' ' + a.Street + ' ' + m.House_Number + N', кв. ' + p.Info AS 'Адрес помещения', " +
+        int id_ipy = -1, id_premises = -1, id_ls = -1;
+        string premises_name, ipy_mark;
+
+        string query_load = "SELECT py.ID, py.ID_MKD_Premises, py.ID_LS, a.Type_Street + ' ' + a.Street + ' ' + m.House_Number + N', кв. ' + p.Info AS 'Адрес помещения', " +
            "o.SecondName + ' ' + o.FirstName + ' ' + o.LastName AS 'ФИО владельца ЛС', py.Serial_Number AS 'Серийный номер ПУ', py.Type_PY AS 'Вид ПУ', py.Mark_PY AS 'Марка ПУ', " +
            "py.Model_PY AS 'Модель ПУ', py.Is_Distance_Check AS 'Возможность дистанционного снятия показаний', py.Distance_Check_Info AS 'Наименование системы дистанционного снятия показаний', " +
            "py.Is_Many_PY_Used AS 'Объем ресурса(ов) определяется с помощью нескольких приборов учета', py.Place_Location_PY AS 'Место установки текущего ПУ', py.GIS_Number_PY_To_Connect AS 'Номер ПУ в ГИС ЖКХ', py.Type_Kommunal_Res AS 'Вид коммунального ресурса', " +
@@ -35,7 +38,7 @@ namespace GIS.UC
 
         private void PY_UC_Load(object sender, EventArgs e)
         {
-            GIS_Data.SQLFill(query1, dataGridView1);
+            GIS_Data.SQLFill(query_load, dataGridView1);
 
             splitContainer1.Size = new Size(1233, 394);
             
@@ -79,26 +82,121 @@ namespace GIS.UC
             dataGridView1.Size = new Size(967, 336);
 
             dataGridView1.Columns[0].Visible = false;
+            dataGridView1.Columns[1].Visible = false;
+            dataGridView1.Columns[2].Visible = false;
         }
 
         private void Add_Click(object sender, EventArgs e)
         {
-            var form = new IPY_AF();
+            /*var form = new IPY_AF();
             DialogResult result = form.ShowDialog();
             if (result == DialogResult.Cancel)
-                GIS_Data.SQLFill(query1, dataGridView1);
+                GIS_Data.SQLFill(query1, dataGridView1);*/
+            string query_CB1_load = "SELECT p.ID AS ID, a.Type_Street + ' ' + a.Street + ' ' + m.House_Number + N', кв. ' + p.Info AS 'Address' FROM MKD_Premises p " +
+                "JOIN Characteristic_MKD m ON m.ID = p.ID_MKD_Address " +
+                "JOIN Address_Book a ON a.ID = m.ID_Address " +
+                "WHERE p.ID = @p_id";
+
+            string query_CB2_load = "SELECT l.ID AS ID, o.SecondName + ' ' + o.FirstName + ' ' + o.LastName AS FIO FROM LS l " +
+                "JOIN Owner_LS o ON o.ID = l.ID_Owner " +
+                "WHERE l.ID = @l_id";
+
+            List<string> querys = new List<string>();
+            querys.Add(query_CB1_load);
+            querys.Add(query_CB2_load);
+
+            var ipy = new IPY_AF() { Text = $"Добавление нового ИПУ. {premises_name}" };
+            ipy.Load_Data(Add_Func(querys));
+            ipy.save_query = "INSERT INTO Metering_Devices(ID_MKD_Premises, ID_LS, Serial_Number, Type_PY, Mark_PY, Model_PY, Is_Distance_Check, Distance_Check_Info," +
+                        "Is_Many_PY_Used, Place_Location_PY, GIS_Number_PY_To_Connect, Type_Kommunal_Res, Unit_Measurement_PY, Type_PU_Number_Tariffs," +
+                        "T1, T2, T3, Trans_Coef, Installation_Date, Operation_Date, Last_Check_Date, Plomb_PU_Date, Is_Temperature_Sensors, Temperature_Sensors_Info," +
+                        "Is_Pressure_Sensors, Pressure_Sensors_Info, Is_AutomaticCalculation) " +
+                        "VALUES(@ID_MKD_Premises, @ID_LS, @Serial_Number, @Type_PY, @Mark_PY, @Model_PY, @Is_Distance_Check, @Distance_Check_Info," +
+                        "@Is_Many_PY_Used, @Place_Location_PY, @GIS_Number_PY_To_Connect, @Type_Kommunal_Res, @Unit_Measurement_PY, @Type_PU_Number_Tariffs," +
+                        "@T1, @T2, @T3, @Trans_Coef, CONVERT(VARCHAR, @Installation_Date,103), CONVERT(VARCHAR, @Operation_Date,103), CONVERT(VARCHAR, @Last_Check_Date,103), " +
+                        "CONVERT(VARCHAR, @Plomb_PU_Date,103), @Is_Temperature_Sensors, @Temperature_Sensors_Info," +
+                        "@Is_Pressure_Sensors, @Pressure_Sensors_Info, @Is_AutomaticCalculation)";
+            ipy.status = "добавлена";
+            ipy.metering_DevicesBindingNavigatorSaveItem.Text = "Сохранить данные";
+            DialogResult result = ipy.ShowDialog();
+            if (result == DialogResult.Cancel)
+                GIS_Data.SQLFill(query_load, dataGridView1);
+        }
+
+        private List<DataTable> Add_Func(List<string> querys)
+        {
+            List<DataTable> dataTables = new List<DataTable>();
+            using (SqlConnection connection = new SqlConnection(GIS_Data.connectionString))
+            {
+                SqlCommand cmd = new SqlCommand(querys[0], connection);
+                List<SqlParameter> prm = new List<SqlParameter>()
+                {
+                    new SqlParameter("@p_id",SqlDbType.Int) { Value = id_premises},
+                    new SqlParameter("@l_id",SqlDbType.Int) { Value = id_ls}
+                };
+                cmd.Parameters.AddRange(prm.ToArray());
+                DataTable dt = new DataTable();
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                da.Fill(dt);
+                dataTables.Add(dt);
+
+                cmd.CommandText = querys[1];
+                da.SelectCommand = cmd;
+                DataTable dt1 = new DataTable();
+                da.Fill(dt1);
+                dataTables.Add(dt1);
+
+                return dataTables;
+            }
         }
 
         private void Edit_Click(object sender, EventArgs e)
         {
-            if (GIS_Data.ID > 0)
+            if (id_ipy > -1)
             {
-                var form = new IPY_Edit();
-                DialogResult result = form.ShowDialog();
+                string query_CB1_load = "SELECT p.ID AS ID, a.Type_Street + ' ' + a.Street + ' ' + m.House_Number + N', кв. ' + p.Info AS 'Address' FROM MKD_Premises p " +
+                    "JOIN Characteristic_MKD m ON m.ID = p.ID_MKD_Address " +
+                    "JOIN Address_Book a ON a.ID = m.ID_Address " +
+                    "WHERE p.ID = @p_id";
+
+                string query_CB2_load = "SELECT l.ID AS ID, o.SecondName + ' ' + o.FirstName + ' ' + o.LastName AS FIO FROM LS l " +
+                    "JOIN Owner_LS o ON o.ID = l.ID_Owner " +
+                    "WHERE l.ID = @l_id";
+
+                string query_load_edit = "SELECT Serial_Number, Type_PY, Mark_PY, Model_PY, Is_Distance_Check, Distance_Check_Info, Is_Many_PY_Used, Place_Location_PY, GIS_Number_PY_To_Connect, " +
+                    "Type_Kommunal_Res, Unit_Measurement_PY, Type_PU_Number_Tariffs, T1, T2, T3, Trans_Coef, Installation_Date, Operation_Date, Last_Check_Date, Plomb_PU_Date, " +
+                    "Is_Temperature_Sensors, Temperature_Sensors_Info, Is_Pressure_Sensors, Pressure_Sensors_Info, Is_AutomaticCalculation, Unique_GIS_Number FROM Metering_Devices " +
+                    "WHERE ID = @ID";
+
+                List<string> querys = new List<string>();
+                querys.Add(query_CB1_load);
+                querys.Add(query_CB2_load);
+
+                var ipy = new IPY_AF() { Text = $"Изменение данных ИПУ. {premises_name}" };
+                ipy.Load_Data_Edit(Add_Func(querys), id_ipy, query_load_edit);
+                ipy.save_query = $"UPDATE Metering_Devices SET ID_MKD_Premises = @ID_MKD_Premises, ID_LS = @ID_LS, " +
+                        $"Serial_Number = @Serial_Number, Type_PY = @Type_PY," +
+                        $"Mark_PY = @Mark_PY, Model_PY = @Model_PY, " +
+                        $"Is_Distance_Check = @Is_Distance_Check, Distance_Check_Info = @Distance_Check_Info," +
+                        $"Is_Many_PY_Used = @Is_Many_PY_Used, Place_Location_PY = @Place_Location_PY," +
+                        $"GIS_Number_PY_To_Connect = @GIS_Number_PY_To_Connect, Type_Kommunal_Res = @Type_Kommunal_Res," +
+                        $"Unit_Measurement_PY = @Unit_Measurement_PY, Type_PU_Number_Tariffs = @Type_PU_Number_Tariffs," +
+                        $"T1 = @T1, T2 = @T2, T3 = @T3," +
+                        $"Trans_Coef = @Trans_Coef, Installation_Date = CONVERT(VARCHAR,@Installation_Date,103)," +
+                        $"Operation_Date = CONVERT(VARCHAR,@Operation_Date,103)," +
+                        $"Last_Check_Date = CONVERT(VARCHAR,@Last_Check_Date,103)," +
+                        $"Plomb_PU_Date = CONVERT(VARCHAR,@Plomb_PU_Date,103)," +
+                        $"Is_Temperature_Sensors = @Is_Temperature_Sensors, Temperature_Sensors_Info = @Temperature_Sensors_Info," +
+                        $"Is_Pressure_Sensors = @Is_Pressure_Sensors, Pressure_Sensors_Info = @Pressure_Sensors_Info," +
+                        $"Is_AutomaticCalculation = @Is_AutomaticCalculation " +
+                        $"WHERE ID = {id_ipy}";
+                ipy.status = "изменена";
+                ipy.metering_DevicesBindingNavigatorSaveItem.Text = "Изменить данные";
+                DialogResult result = ipy.ShowDialog();
                 if (result == DialogResult.Cancel)
                 {
-                    GIS_Data.SQLFill(query1, dataGridView1);
-                    GIS_Data.ID = 0;
+                    GIS_Data.SQLFill(query_load, dataGridView1);
+                    id_ipy = -1;
                 }
             }
             else MessageBox.Show("Укажите запись из таблицы для изменения");
@@ -107,18 +205,24 @@ namespace GIS.UC
         private void Remove_Click(object sender, EventArgs e)
         {
             string queryDelete = "DELETE Metering_Devices WHERE ID = @ID";
-            if (GIS_Data.RemoveClickTemp(GIS_Data.ID, queryDelete, false) == true) GIS_Data.SQLFill(query1, dataGridView1);
+            if (GIS_Data.RemoveClickTemp(GIS_Data.ID, queryDelete, false, $"Удалить данные ИПУ: {ipy_mark}? По адресу {premises_name}") == true) GIS_Data.SQLFill(query_load, dataGridView1);
         }
 
         private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             try
             {
-                GIS_Data.ID = int.Parse(dataGridView1.Rows[e.RowIndex].Cells[0].Value.ToString());
+                id_ipy = int.Parse(dataGridView1.Rows[e.RowIndex].Cells[0].Value.ToString());
+                id_premises = int.Parse(dataGridView1.Rows[e.RowIndex].Cells[1].Value.ToString());
+                id_ls = int.Parse(dataGridView1.Rows[e.RowIndex].Cells[2].Value.ToString());
+                premises_name = dataGridView1.Rows[e.RowIndex].Cells[3].Value.ToString();
+                ipy_mark = dataGridView1.Rows[e.RowIndex].Cells[7].Value.ToString();
             }
             catch
             {
-                GIS_Data.ID = -1;
+                id_ipy = -1;
+                id_premises = -1;
+                id_ls = -1;
             }
         }
 
@@ -140,12 +244,12 @@ namespace GIS.UC
         private void Refresh_Click(object sender, EventArgs e)
         {
             textBox1.Text = "";
-            GIS_Data.SQLFill(query1, dataGridView1);
+            GIS_Data.SQLFill(query_load, dataGridView1);
         }
 
         private void textBox1_KeyDown(object sender, KeyEventArgs e)
         {
-            GIS_Data.SearchBind(textBox1, dataGridView1, query1, e);
+            GIS_Data.SearchBind(textBox1, dataGridView1, query_load, e);
         }
     }
 }

@@ -120,6 +120,12 @@
     <Compile Include="Forms\Entrance_AF.Designer.cs">
       <DependentUpon>Entrance_AF.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\Input_Meter_AF.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Input_Meter_AF.Designer.cs">
+      <DependentUpon>Input_Meter_AF.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\IPY_AF.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -180,6 +186,12 @@
     <Compile Include="Forms\Premises_LS_Relation_AF.Designer.cs">
       <DependentUpon>Premises_LS_Relation_AF.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\ProgressBar_Form.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ProgressBar_Form.Designer.cs">
+      <DependentUpon>ProgressBar_Form.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\Services_AF.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -234,6 +246,12 @@
     </Compile>
     <Compile Include="UC\LS_UC.Designer.cs">
       <DependentUpon>LS_UC.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UC\Meter_Reading_UC.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UC\Meter_Reading_UC.Designer.cs">
+      <DependentUpon>Meter_Reading_UC.cs</DependentUpon>
     </Compile>
     <Compile Include="UC\MKD_UC.cs">
       <SubType>UserControl</SubType>
@@ -331,6 +349,9 @@
     <EmbeddedResource Include="Forms\Entrance_AF.resx">
       <DependentUpon>Entrance_AF.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Input_Meter_AF.resx">
+      <DependentUpon>Input_Meter_AF.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\IPY_AF.resx">
       <DependentUpon>IPY_AF.cs</DependentUpon>
     </EmbeddedResource>
@@ -360,6 +381,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Premises_LS_Relation_AF.resx">
       <DependentUpon>Premises_LS_Relation_AF.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ProgressBar_Form.resx">
+      <DependentUpon>ProgressBar_Form.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Services_AF.resx">
       <DependentUpon>Services_AF.cs</DependentUpon>
@@ -395,6 +419,9 @@
     <EmbeddedResource Include="UC\LS_UC.resx">
       <DependentUpon>LS_UC.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="UC\Meter_Reading_UC.resx">
+      <DependentUpon>Meter_Reading_UC.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UC\MKD_UC.resx">
       <DependentUpon>MKD_UC.cs</DependentUpon>
     </EmbeddedResource>
@@ -425,6 +452,7 @@
     <EmbeddedResource Include="UC\Services_PD_UC.resx">
       <DependentUpon>Services_PD_UC.cs</DependentUpon>
     </EmbeddedResource>
+    <None Include="bin\Debug\Templates\Template_Meter_Housemain.xlsx" />
     <None Include="bin\Debug\Templates\Шаблон импорта ЛС-11.13.0.5.xlsx" />
     <None Include="bin\Debug\Templates\Шаблон импорта сведений о МКД-УО-13.0.1.1.xlsx" />
     <None Include="bin\Debug\Templates\Шаблон импорта сведений о ПУ-11.13.0.10.xlsx" />

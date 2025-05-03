@@ -355,7 +355,6 @@ namespace GIS.Forms
         private GISDataSetTableAdapters.MKD_PremisesTableAdapter mKD_PremisesTableAdapter;
         private GISDataSetTableAdapters.TableAdapterManager tableAdapterManager;
         private System.Windows.Forms.BindingNavigator mKD_PremisesBindingNavigator;
-        private System.Windows.Forms.ToolStripButton mKD_PremisesBindingNavigatorSaveItem;
         private System.Windows.Forms.TextBox total_AreaTextBox;
         private System.Windows.Forms.TextBox living_Total_AreaTextBox;
         private System.Windows.Forms.TextBox cadastral_NumberTextBox;
@@ -367,5 +366,6 @@ namespace GIS.Forms
         private System.Windows.Forms.ComboBox comboBox4;
         private System.Windows.Forms.ComboBox comboBox5;
         private System.Windows.Forms.TextBox infoTextBox;
+        public System.Windows.Forms.ToolStripButton mKD_PremisesBindingNavigatorSaveItem;
     }
 }

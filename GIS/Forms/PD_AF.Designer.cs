@@ -71,11 +71,11 @@ namespace GIS.Forms
             this.total_Legal_ExpensesTextBox = new System.Windows.Forms.TextBox();
             this.full_GIS_TotalTextBox = new System.Windows.Forms.TextBox();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.viewAddressPremisesForPDBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.viewLSBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.lSBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.comboBox2 = new System.Windows.Forms.ComboBox();
             this.view_LSTableAdapter = new GIS.GISDataSetTableAdapters.View_LSTableAdapter();
-            this.viewAddressPremisesForPDBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.view_Address_Premises_For_PDTableAdapter = new GIS.GISDataSetTableAdapters.View_Address_Premises_For_PDTableAdapter();
             iD_LSLabel = new System.Windows.Forms.Label();
             type_PDLabel = new System.Windows.Forms.Label();
@@ -98,9 +98,9 @@ namespace GIS.Forms
             ((System.ComponentModel.ISupportInitialize)(this.payment_DocumentBindingSource)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.payment_DocumentBindingNavigator)).BeginInit();
             this.payment_DocumentBindingNavigator.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.viewAddressPremisesForPDBindingSource)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.viewLSBindingSource)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.lSBindingSource)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.viewAddressPremisesForPDBindingSource)).BeginInit();
             this.SuspendLayout();
             // 
             // iD_LSLabel
@@ -471,6 +471,11 @@ namespace GIS.Forms
             this.comboBox1.TabIndex = 35;
             this.comboBox1.ValueMember = "ID_LS";
             // 
+            // viewAddressPremisesForPDBindingSource
+            // 
+            this.viewAddressPremisesForPDBindingSource.DataMember = "View_Address_Premises_For_PD";
+            this.viewAddressPremisesForPDBindingSource.DataSource = this.gISDataSet;
+            // 
             // viewLSBindingSource
             // 
             this.viewLSBindingSource.DataMember = "View_LS";
@@ -492,11 +497,6 @@ namespace GIS.Forms
             // view_LSTableAdapter
             // 
             this.view_LSTableAdapter.ClearBeforeFill = true;
-            // 
-            // viewAddressPremisesForPDBindingSource
-            // 
-            this.viewAddressPremisesForPDBindingSource.DataMember = "View_Address_Premises_For_PD";
-            this.viewAddressPremisesForPDBindingSource.DataSource = this.gISDataSet;
             // 
             // view_Address_Premises_For_PDTableAdapter
             // 
@@ -552,9 +552,9 @@ namespace GIS.Forms
             ((System.ComponentModel.ISupportInitialize)(this.payment_DocumentBindingNavigator)).EndInit();
             this.payment_DocumentBindingNavigator.ResumeLayout(false);
             this.payment_DocumentBindingNavigator.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.viewAddressPremisesForPDBindingSource)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.viewLSBindingSource)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.lSBindingSource)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.viewAddressPremisesForPDBindingSource)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -567,7 +567,6 @@ namespace GIS.Forms
         private GISDataSetTableAdapters.Payment_DocumentTableAdapter payment_DocumentTableAdapter;
         private GISDataSetTableAdapters.TableAdapterManager tableAdapterManager;
         private System.Windows.Forms.BindingNavigator payment_DocumentBindingNavigator;
-        private System.Windows.Forms.ToolStripButton payment_DocumentBindingNavigatorSaveItem;
         private GISDataSetTableAdapters.LSTableAdapter lSTableAdapter;
         private System.Windows.Forms.DateTimePicker calculation_PeriodDateTimePicker;
         private System.Windows.Forms.TextBox total_Area_LSTextBox;
@@ -591,5 +590,6 @@ namespace GIS.Forms
         private GISDataSetTableAdapters.View_LSTableAdapter view_LSTableAdapter;
         private System.Windows.Forms.BindingSource viewAddressPremisesForPDBindingSource;
         private GISDataSetTableAdapters.View_Address_Premises_For_PDTableAdapter view_Address_Premises_For_PDTableAdapter;
+        public System.Windows.Forms.ToolStripButton payment_DocumentBindingNavigatorSaveItem;
     }
 }

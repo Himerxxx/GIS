@@ -205,5 +205,40 @@ namespace GIS
                 }
             }
         }
+
+        private void индивидуальныеПоказанияToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void внестиToolStripMenuItem_Click(object sender, EventArgs e)
+        {            
+            var uc = new PremisesUC();
+            if (panel1.Controls.Count > 0)
+                panel1.Controls.RemoveAt(0);
+            panel1.Controls.Add(uc);
+        }
+
+        public void просмотрToolStripMenuItem_Click(object sender, EventArgs e)
+        {            
+            var uc = new Meter_Reading_UC();
+            if (panel1.Controls.Count > 0)
+                panel1.Controls.RemoveAt(0);
+            panel1.Controls.Add(uc);
+        }
+
+        public void View_Meter_For_Flat(string query_load)
+        {            
+            var uc = new Meter_Reading_UC();
+            uc.query_load = query_load;
+            if (panel1.Controls.Count > 0)
+                panel1.Controls.RemoveAt(0);
+            panel1.Controls.Add(uc);
+        }
+
+        private void платежныеДокументыToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

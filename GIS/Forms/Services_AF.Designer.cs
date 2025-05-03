@@ -677,7 +677,6 @@ namespace GIS.Forms
         private GISDataSetTableAdapters.Services_For_The_Payment_PeriodTableAdapter services_For_The_Payment_PeriodTableAdapter;
         private GISDataSetTableAdapters.TableAdapterManager tableAdapterManager;
         private System.Windows.Forms.BindingNavigator services_For_The_Payment_PeriodBindingNavigator;
-        private System.Windows.Forms.ToolStripButton services_For_The_Payment_PeriodBindingNavigatorSaveItem;
         private System.Windows.Forms.TextBox v_S_Count_ServiseTextBox;
         private System.Windows.Forms.TextBox v_S_Count_ResoursesTextBox;
         private System.Windows.Forms.TextBox tarifTextBox;
@@ -703,5 +702,6 @@ namespace GIS.Forms
         private System.Windows.Forms.ComboBox comboBox2;
         private System.Windows.Forms.ComboBox comboBox3;
         private System.Windows.Forms.ComboBox comboBox4;
+        public System.Windows.Forms.ToolStripButton services_For_The_Payment_PeriodBindingNavigatorSaveItem;
     }
 }

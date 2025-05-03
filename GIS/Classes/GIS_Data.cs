@@ -19,23 +19,23 @@ namespace GIS
 
         public static int MKD_ID;
         public static int Entrance_ID = -1;
-        public static int Premises_ID;
+        //public static int Premises_ID;
         public static int OPY_ID;
 
         public static int PD_ID;
-        public static int LS_ID;
+        //public static int LS_ID;
 
         public static string Start_Date;
         public static string End_Date;
 
-        public static string Check_C(ComboBox e) => e.SelectedItem == null ? "null" : e.SelectedIndex.ToString();
+        public static string Check_C(ComboBox e) => e.SelectedItem == null ? "" : e.SelectedIndex.ToString();
 
-        public static string Check_T(TextBox e) => e.Text == "" ? "null" : e.Text;
+        public static string Check_T(TextBox e) => e.Text == "" ? "" : e.Text;
 
-        public static string Check_M(MaskedTextBox e) => e.Text == "" ? "null" : e.Text;
+        public static string Check_M(MaskedTextBox e) => e.Text == "" ? "" : e.Text;
 
-        public static string Check_TD(TextBox e) => e.Text == "" ? "null" : e.Text.Replace(",", ".");
-
+        public static object Check_TD(TextBox e) => e.Text == "" ? "0" : e.Text.Replace(",", ".");
+        public static object Check_String_D(string e) => e == "" ? "0" : e.Replace(",", ".");
         public static string Check_D(DateTimePicker e)
         {
             if (e.Checked == false) return "null";
@@ -45,7 +45,14 @@ namespace GIS
                 return date.Substring(4) + date.Substring(2, 2) + date.Substring(0, 2);
             }
         }
-        public static string Check_TN(TextBox e) => e.Text == "" ? "null" : $"N'{e.Text.Trim()}'";
+        /*public static string Check_String_D(string e)
+        {
+
+            string date = e.Replace(".", "");
+            return date.Substring(4) + date.Substring(2, 2) + date.Substring(0, 2);
+
+        }*/
+        public static string Check_TN(TextBox e) => e.Text == "" ? "" : $"N'{e.Text.Trim()}'";
 
 
         //SQL запрос для заполнения DataGridView
@@ -71,11 +78,11 @@ namespace GIS
         //Шаблон кнопки редактирования
 
         //Шаблон кнопки удаления
-        public static bool RemoveClickTemp(int class_id, string queryDelete, bool flag)
+        public static bool RemoveClickTemp(int class_id, string queryDelete, bool flag, string message)
         {
             if (class_id > 0)
             {
-                DialogResult result = MessageBox.Show($"Удалить выбранную запись?", "Внимание", MessageBoxButtons.OKCancel, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
+                DialogResult result = MessageBox.Show(message, "Внимание", MessageBoxButtons.OKCancel, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
                 if (result == DialogResult.OK)
                 {
                     try
@@ -175,6 +182,251 @@ namespace GIS
                 e.SuppressKeyPress = true;
             }
         }
+        //Создание шаблона для подачи показаний счетчиков за месяц
+        public static void Template_Meter_Housemain_Create()
+        {
+            List<string> streets = new List<string>();
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                SqlCommand command = new SqlCommand("SELECT Type_Street + ' ' + Street FROM Address_Book ORDER BY Type_Street + ' ' + Street", connection);
+
+                SqlDataReader dr = command.ExecuteReader();
+
+                while (dr.Read())
+                {
+                    streets.Add(dr.GetString(0));
+                }
+                connection.Close();
+            }
+
+            string sFileName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Templates", "Template_Meter_Housemain.xlsx");
+
+            string newPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), string.Format("Документ подачи показаний счетчиков за {0}.xlsx", DateTime.Now.ToShortDateString().Remove(0, 3)));
+
+            File.Copy(sFileName, newPath);
+
+            try
+            {
+                string sheetName_1 = "Информация о доме";
+                string sheetName_3 = "Вспомогательная информация";
+
+                using (Classes.Excel_Dox helper = new Classes.Excel_Dox())
+                {
+
+                    if (helper.Open(filePath: newPath))
+                    {
+                        helper.Set(sheetName_1, 1, 2, helper.Get(sheetName_1, 1, 2).ToString().Replace("{City}", "Рубцовск"));
+
+                        for (int i = 1; i < 13; i++)
+                        {
+                            string date = $"0{i}-{DateTime.Now.Year}";
+                            helper.Set(sheetName_3, 1, i, date.Count() == 7 ? date : date.Remove(0, 1));
+                        }
+                        int j = 1;
+                        foreach (var street in streets)
+                        {
+                            helper.Set(sheetName_3, 2, j, street);
+                            j++;
+                        }
+                    }
+
+                    helper.Save();
+
+                    helper.Dispose();
+                }
+
+            }
+            catch (Exception ex) { Console.WriteLine(ex.Message); }
+        }
+
+        //Метод считывания показаний ИПУ и внесение данных в БД
+        public static async Task Input_Meter_From_Document()
+        {
+            using (FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog())
+            {
+                DialogResult result = folderBrowserDialog.ShowDialog();
+                if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(folderBrowserDialog.SelectedPath))
+                {
+                    await Task.Run(() =>
+                    {
+                        Read_Document_Meters(folderBrowserDialog.SelectedPath);
+                    });
+                }
+                else
+                {
+                    MessageBox.Show("Выбор папки отменен.");
+                }
+            }
+        }
+
+        private static void Read_Document_Meters(string folder_path)
+        {
+            string selectedFolder = folder_path;
+            List<string> excelFiles = GetExcelFiles(selectedFolder);
+            int max_value = excelFiles.Count;
+            Form progressForm = new Form() { Text = $"Загрузка данных", Size = new Size(300, 150), StartPosition = FormStartPosition.CenterScreen };
+
+            ProgressBar progress_bar = new ProgressBar() { Size = new Size(275, 40), Location = new Point(5, 50), Minimum = 0, Maximum = max_value, Value = 0 };
+            Label progress_text = new Label() { Text = $"Загрузка файлов... ", Location = new Point(5, 5), Size = new Size(250, 30) };
+
+            progressForm.Controls.Add(progress_bar);
+            progressForm.Controls.Add(progress_text);
+            
+            progressForm.Show();
+
+            int fileCounter = 0;  //Счетчик обработанных файлов
+            int uploadFileCounter = 0;
+            progress_text.Text = $"Загрузка файлов {fileCounter} из {max_value}";
+            string sheetName_1 = "Информация о доме";
+            string sheetName_2 = "Показания";
+
+            try
+            {
+                foreach (string filePath in excelFiles)
+                {
+                    string house_name = "", house_number = "", date = "";
+
+                    List<string[]> meters = new List<string[]>();
+
+                    using (Classes.Excel_Dox helper = new Classes.Excel_Dox())
+                    {
+                        try
+                        {
+                            if (helper.Open(filePath))
+                            {
+                                house_name = helper.Get(sheetName_1, 4, 2).ToString();      //определение выбранного адреса дома
+                                house_number = helper.Get(sheetName_1, 7, 2).ToString();    //определение номера дома
+                                date = helper.Get(sheetName_1, 4, 3).ToString();             //определение выбранной даты                    
+
+                                int i = 2;
+
+                                while (helper.Get(sheetName_2, 1, i) != null)
+                                {
+                                    string[] row_meters = new string[6];
+                                    for (int j = 1; j < 7; j++)
+                                    {
+                                        row_meters[j - 1] = helper.Get(sheetName_2, j, i) == null ? "0" : helper.Get(sheetName_2, j, i).ToString();
+
+                                        if (j == 6)
+                                        {
+                                            meters.Add(row_meters);
+                                            i++;
+                                        }
+                                    }
+                                }
+                            }
+                            helper.Save();
+                            helper.Dispose();
+                        }
+                        catch
+                        {
+                            fileCounter++;
+                            progress_text.Text = $"Загрузка файлов {fileCounter} из {max_value}";
+                            progress_bar.Value = fileCounter;                            
+                            continue; 
+                        }
+
+                    }
+
+                    using (SqlConnection connection = new SqlConnection(connectionString))
+                    {
+                        connection.Open();
+
+                        foreach (var meter in meters)
+                        {
+                            string query_save_from_document =
+                                "DECLARE @ID_Premises Int " +
+                                "SELECT @ID_Premises = p.ID " +
+                                "FROM MKD_Premises p " +
+                                "JOIN Characteristic_MKD m ON m.ID = p.ID_MKD_Address " +
+                                "JOIN Address_Book a ON a.ID = m.ID_Address " +
+                                "WHERE UPPER(LTRIM(RTRIM(a.Street))) = UPPER(LTRIM(RTRIM(@Address))) " +
+                                "AND m.House_Number = @House_Number " +
+                                "AND p.Info = @Flat_Number " +
+                                "INSERT INTO Input_meter_readings(ID_Premises, Month_of_metering, Cold_water, Hot_water, Electic_energy, Heating) " +
+                                "VALUES (@ID_Premises, @Month_of_metering, @Cold_water, @Hot_water, @Electic_energy, @Heating) ";
+
+                            SqlCommand command = new SqlCommand(query_save_from_document, connection);
+
+                            command.Parameters.AddWithValue("@Flat_Number", meter[0]);
+                            command.Parameters.AddWithValue("@Address", house_name.Split(' ')[1]);
+                            command.Parameters.AddWithValue("@House_Number", house_number);
+                            command.Parameters.Add("@Month_of_metering", SqlDbType.Date).Value = date;
+                            command.Parameters.AddWithValue("@Cold_water", Check_String_D(meter[2]));
+                            command.Parameters.AddWithValue("@Hot_water", Check_String_D(meter[3]));
+                            command.Parameters.AddWithValue("@Electic_energy", Check_String_D(meter[4]));
+                            command.Parameters.AddWithValue("@Heating", Check_String_D(meter[5]));
+
+                            command.ExecuteNonQuery();
+                        }
+
+                        connection.Close();
+                    }
+                    fileCounter++;
+                    uploadFileCounter++;
+                    progress_text.Text = $"Загрузка файлов {fileCounter} из {max_value}";
+                    progress_bar.Value = fileCounter; 
+                    Application.DoEvents();         // Даем UI потоку возможность обновиться                    
+                }
+                progressForm.Close(); //Закрываем форму ProgressBar после завершения
+                MessageBox.Show($"Загружено файлов {uploadFileCounter} из {max_value}");
+            }
+            catch { }
+
+
+        }
+
+        private static List<string> GetExcelFiles(string folderPath)
+        {
+            List<string> excelFiles = new List<string>();
+            try
+            {
+                string[] files = Directory.GetFiles(folderPath, "*.xlsx", SearchOption.TopDirectoryOnly); // Только в текущей папке
+
+                excelFiles.AddRange(files);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при получении списка файлов: {ex.Message}");
+            }
+            return excelFiles;
+        }
+        //Метод отображения прогресса загрузки данных
+        public static async void ProgressForm(int progress_bar_max_value)
+        {
+            var progress_form = new Form() { Text = $"Загрузка данных", Size = new Size(300, 150), StartPosition = FormStartPosition.CenterScreen };
+            ProgressBar progress_bar = new ProgressBar() { Size = new Size(275, 40), Location = new Point(5, 50), Maximum = progress_bar_max_value, Value = 0 };
+            Label progress_text = new Label() { Text = $"Загрузка файлов... ", Location = new Point(5, 5), Size = new Size(250, 30) };
+            progress_form.Controls.Add(progress_bar);
+            progress_form.Controls.Add(progress_text);
+            progress_form.Show();
+
+            await Test_Async(1, progress_bar_max_value, progress_bar, progress_text);
+            await Test_Async(2, progress_bar_max_value, progress_bar, progress_text);
+            await Test_Async(3, progress_bar_max_value, progress_bar, progress_text);
+            await Test_Async(4, progress_bar_max_value, progress_bar, progress_text);
+            /*progress_text.Text = await Test_Async(1);
+            progress_bar.Value = 1;
+            
+            progress_text.Text = await Test_Async(2);
+            progress_bar.Value = 2;
+           
+            progress_text.Text = await Test_Async(3);
+            progress_bar.Value = 3;*/
+
+
+        }
+        private static async Task Test_Async(int i, int max,ProgressBar progress_bar, Label label)
+        {
+            await Task.Delay(2000);
+            progress_bar.Value = i;
+            label.Text = $"Загрузка файлов {i} из {max}";
+            
+            //return $"Загрузка файлов {i} из 4";
+        }
+
 
         //Метод заполнения шаблона о МКД
         public static void MKD_Dox_Fill(List<int> id)
@@ -405,7 +657,7 @@ namespace GIS
 
             if (sFileName.Contains("Шаблон импорта сведений о ПУ") == true)
             {
-                foreach(var j in id)
+                foreach (var j in id)
                 {
                     try
                     {
@@ -573,7 +825,7 @@ namespace GIS
                 string newPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Шаблон ПД.xlsx");
 
                 File.Copy(sFileName, newPath);
-                foreach(var j in id)
+                foreach (var j in id)
                 {
                     try
                     {
@@ -714,10 +966,10 @@ namespace GIS
             }
         }
 
-    
 
-    //Строка подключения
-    public static string connectionString = /*@"Data Source=DESKTOP-P4VMBDQ;Initial Catalog=GIS;User Id=DESKTOP-P4VMBDQ\-egor;Password=your_sql_password";*/@"Data Source=(local);Initial Catalog=GIS;Integrated Security=True";
+
+        //Строка подключения
+        public static string connectionString = /*@"Data Source=DESKTOP-P4VMBDQ;Initial Catalog=GIS;User Id=DESKTOP-P4VMBDQ\-egor;Password=your_sql_password";*/@"Data Source=(local);Initial Catalog=GIS;Integrated Security=True";
         //Запрос для заполнения шаблона о МКД
         public static string DoxFill_MKD_mkd = "Select a.Type_Street + ' ' + a.Street + ' ' + House_Number AS 'Street'" +
                               ",ID_FIAS" +

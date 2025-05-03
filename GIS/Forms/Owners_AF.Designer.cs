@@ -391,7 +391,6 @@ namespace GIS.Forms
         private GISDataSetTableAdapters.Owner_LSTableAdapter owner_LSTableAdapter;
         private GISDataSetTableAdapters.TableAdapterManager tableAdapterManager;
         private System.Windows.Forms.BindingNavigator owner_LSBindingNavigator;
-        private System.Windows.Forms.ToolStripButton owner_LSBindingNavigatorSaveItem;
         private System.Windows.Forms.TextBox firstNameTextBox;
         private System.Windows.Forms.TextBox secondNameTextBox;
         private System.Windows.Forms.TextBox lastNameTextBox;
@@ -403,5 +402,6 @@ namespace GIS.Forms
         private System.Windows.Forms.MaskedTextBox maskedTextBox1;
         private System.Windows.Forms.MaskedTextBox maskedTextBox2;
         private System.Windows.Forms.MaskedTextBox maskedTextBox3;
+        public System.Windows.Forms.ToolStripButton owner_LSBindingNavigatorSaveItem;
     }
 }

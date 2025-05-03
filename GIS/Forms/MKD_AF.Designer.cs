@@ -547,7 +547,6 @@ namespace GIS.Forms
         private GISDataSetTableAdapters.Characteristic_MKDTableAdapter characteristic_MKDTableAdapter;
         private GISDataSetTableAdapters.TableAdapterManager tableAdapterManager;
         private System.Windows.Forms.BindingNavigator characteristic_MKDBindingNavigator;
-        private System.Windows.Forms.ToolStripButton characteristic_MKDBindingNavigatorSaveItem;
         private System.Windows.Forms.TextBox iD_FIASTextBox;
         private System.Windows.Forms.TextBox total_Building_AreaTextBox;
         private System.Windows.Forms.TextBox count_floorsTextBox;
@@ -567,5 +566,6 @@ namespace GIS.Forms
         private System.Windows.Forms.MaskedTextBox maskedTextBox2;
         private System.Windows.Forms.MaskedTextBox maskedTextBox3;
         private System.Windows.Forms.MaskedTextBox maskedTextBox4;
+        public System.Windows.Forms.ToolStripButton characteristic_MKDBindingNavigatorSaveItem;
     }
 }

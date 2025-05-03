@@ -343,7 +343,6 @@ namespace GIS.Forms
         private GISDataSetTableAdapters.LSTableAdapter lSTableAdapter;
         private GISDataSetTableAdapters.TableAdapterManager tableAdapterManager;
         private System.Windows.Forms.BindingNavigator lSBindingNavigator;
-        private System.Windows.Forms.ToolStripButton lSBindingNavigatorSaveItem;
         private System.Windows.Forms.TextBox number_JKYTextBox;
         private System.Windows.Forms.TextBox shareOfPaymentTextBox;
         private System.Windows.Forms.TextBox eLSTextBox;
@@ -357,5 +356,6 @@ namespace GIS.Forms
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.BindingSource viewOwnerBindingSource;
         private GISDataSetTableAdapters.View_OwnerTableAdapter view_OwnerTableAdapter;
+        public System.Windows.Forms.ToolStripButton lSBindingNavigatorSaveItem;
     }
 }

@@ -16,7 +16,7 @@ namespace GIS.UC
 {
     public partial class LS_UC : UserControl
     {
-        string query1 = "SELECT l.ID, p.ID, o.FirstName + ' ' + o.SecondName + ' ' + o.LastName AS 'ФИО Владельца', ab.Type_Street + ' ' + ab.Street + ' ' + mkd.House_Number + N', кв. ' + p.Info AS 'Адрес помещения' ," +
+        string query_load = "SELECT l.ID, p.ID, l.ID_Owner, o.FirstName + ' ' + o.SecondName + ' ' + o.LastName AS 'ФИО Владельца', ab.Type_Street + ' ' + ab.Street + ' ' + mkd.House_Number + N', кв. ' + p.Info AS 'Адрес помещения' ," +
            "l.Type_LS AS 'Тип лицевого счета', l.Number_JKY AS 'Идентификатор ЖКУ', l.Is_Employer AS 'Является нанимателем', l.Is_Splited AS 'Лицевые счета на помещение(я) разделены', " +
            "l.ShareOfPayment AS 'Доля внесения платы размер доли в %', l.Is_Open AS 'ЛС открыт', l.ELS AS 'ЕЛС' " +
            "FROM LS l " +
@@ -25,8 +25,8 @@ namespace GIS.UC
            "JOIN MKD_Premises p ON p.ID = pl.ID_Premises " +
            "JOIN Characteristic_MKD mkd ON mkd.ID = p.ID_MKD_Address " +
            "JOIN Address_Book ab ON ab.ID = mkd.ID_Address";
-        int sec_id;
-        string fio, address;
+        int id_premises, id_ls, id_owner;
+        string owner_name, address;
         public LS_UC()
         {
             InitializeComponent();
@@ -34,7 +34,7 @@ namespace GIS.UC
 
         private void LS_UC_Load(object sender, EventArgs e)
         {
-            GIS_Data.SQLFill(query1, dataGridView1);
+            GIS_Data.SQLFill(query_load, dataGridView1);
 
             splitContainer1.Size = new Size(1233, 394);
             
@@ -79,53 +79,93 @@ namespace GIS.UC
 
             dataGridView1.Columns[0].Visible = false;
             dataGridView1.Columns[1].Visible = false;
-            dataGridView1.Columns[2].Width = 180;
-            dataGridView1.Columns[3].Width = 200;
+            dataGridView1.Columns[2].Visible = false;
+
+            dataGridView1.Columns[3].Width = 180;
+            dataGridView1.Columns[4].Width = 200;
         }
 
 
 
         private void Add_Click(object sender, EventArgs e)
         {
-            var form = new LS_AF();
-            DialogResult result = form.ShowDialog();
+            string query_load_CB = "SELECT DISTINCT ls.ID_Owner , o.FirstName + ' ' + o.SecondName + ' ' + o.LastName AS 'FIO' FROM LS ls " +
+                "JOIN Owner_LS o ON o.ID = ls.ID_Owner " +
+                $"WHERE ls.ID_Owner = @ID";
+
+            var ls = new LS_AF() { Text = $"Добавление нового лицевого счета. {owner_name}" };
+            ls.Load_Data(Add_Func(query_load_CB));
+            ls.save_query = "INSERT INTO LS(ID_Owner, Type_LS, Number_JKY, Is_Employer, Is_Splited, ShareOfPayment, Is_Open, ELS) " +
+                        $"VALUES(@ID_Owner,@Type_LS, " +
+                        $"@Number_JKY, @Is_Employer, " +
+                        $"@Is_Splited, @ShareOfPayment, " +
+                        $"@Is_Open, @ELS)";
+            ls.status = "добавлена";
+            ls.lSBindingNavigatorSaveItem.Text = "Сохранить данные";
+            DialogResult result = ls.ShowDialog();
             if (result == DialogResult.Cancel)
-                GIS_Data.SQLFill(query1, dataGridView1);
+                GIS_Data.SQLFill(query_load, dataGridView1);
+        }
+
+        private DataTable Add_Func(string query)
+        {
+            DataTable dt = new DataTable();
+            using (SqlConnection connection = new SqlConnection(GIS_Data.connectionString))
+            {
+                SqlCommand cmd = new SqlCommand(query, connection);
+                cmd.Parameters.AddWithValue("@ID", id_owner);
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                da.Fill(dt);
+                return dt;
+            }
         }
 
         private void Remove_Click(object sender, EventArgs e)
         {
             string queryDelete = "DELETE LS WHERE ID = @ID";
-            if (GIS_Data.RemoveClickTemp(GIS_Data.LS_ID, queryDelete, false) == true) GIS_Data.SQLFill(query1, dataGridView1);
+            if (GIS_Data.RemoveClickTemp(id_ls, queryDelete, false, $"Удаление данных лицевого счета. {owner_name}. Адрес помещения: {address}") == true) GIS_Data.SQLFill(query_load, dataGridView1);
         }
 
         private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             try
             {
-                GIS_Data.LS_ID = int.Parse(dataGridView1.Rows[e.RowIndex].Cells[0].Value.ToString());
-                sec_id = int.Parse(dataGridView1.Rows[e.RowIndex].Cells[1].Value.ToString());
-                fio = dataGridView1.Rows[e.RowIndex].Cells[2].Value.ToString();
+                id_ls = int.Parse(dataGridView1.Rows[e.RowIndex].Cells[0].Value.ToString());
+                id_premises = int.Parse(dataGridView1.Rows[e.RowIndex].Cells[1].Value.ToString());
+                id_owner = int.Parse(dataGridView1.Rows[e.RowIndex].Cells[2].Value.ToString());
+
+                owner_name = dataGridView1.Rows[e.RowIndex].Cells[2].Value.ToString();
                 address = dataGridView1.Rows[e.RowIndex].Cells[3].Value.ToString();
             }
             catch
             {
-                GIS_Data.LS_ID = -1;
+                id_ls = -1;
+                id_premises = -1;
             }
         }
 
         private void Edit_Click(object sender, EventArgs e)
         {
-            if (GIS_Data.LS_ID > 0)
+            string query_load_CB = "SELECT DISTINCT o.ID , o.FirstName + ' ' + o.SecondName + ' ' + o.LastName AS 'FIO' FROM LS ls " +
+                "JOIN Owner_LS o ON o.ID = ls.ID_Owner " +
+                $"WHERE ls.ID_Owner = @ID";
+
+            string query_load_edit = "SELECT Type_LS, Number_JKY, Is_Employer, Is_Splited, ShareOfPayment, Is_Open, ELS, ID_Owner FROM LS l " +
+                "WHERE l.ID = @ID";
+
+            if (id_ls > -1)
             {
-                var form = new LS_Edit();
-                form.id = GIS_Data.LS_ID;
-                DialogResult result = form.ShowDialog();
+                var ls = new LS_AF() { Text = $"Изменение данных лицевого счета. {owner_name}. Адрес помещения: {address}" };
+                ls.Load_Data_Edit(Add_Func(query_load_CB), query_load_edit, id_ls);
+                ls.save_query = $"UPDATE LS SET ID_Owner = @ID_Owner, Type_LS = @Type_LS, " +
+                        $"Number_JKY = @Number_JKY, Is_Employer = @Is_Employer, " +
+                        $"Is_Splited = @Is_Splited, ShareOfPayment = @ShareOfPayment, Is_Open = @Is_Open, ELS = @ELS " +
+                        $"WHERE ID = {id_ls}";
+                ls.status = "изменена";
+                ls.lSBindingNavigatorSaveItem.Text = "Изменить данные";
+                DialogResult result = ls.ShowDialog();
                 if (result == DialogResult.Cancel)
-                {
-                    GIS_Data.SQLFill(query1, dataGridView1);
-                    GIS_Data.LS_ID = 0;
-                }
+                    GIS_Data.SQLFill(query_load, dataGridView1);
             }
             else MessageBox.Show("Укажите запись из таблицы для изменения");
         }
@@ -138,20 +178,20 @@ namespace GIS.UC
         private void button5_Click(object sender, EventArgs e)
         {
             textBox1.Text = "";
-            GIS_Data.SQLFill(query1, dataGridView1);
+            GIS_Data.SQLFill(query_load, dataGridView1);
         }
 
         private void textBox1_KeyDown(object sender, KeyEventArgs e)
         {
-            GIS_Data.SearchBind(textBox1, dataGridView1, query1, e);
+            GIS_Data.SearchBind(textBox1, dataGridView1, query_load, e);
         }
         private void button6_Click(object sender, EventArgs e)
         {
-            if (GIS_Data.LS_ID > 0)
+            if (id_ls > -1)
             {
-                var form = new LS_SearchForm() { Text = $"ФИО Владельца ЛС: {fio}, Адрес помещения: {address}" };
-                form.l_id = GIS_Data.LS_ID;
-                form.p_id = sec_id;
+                var form = new LS_SearchForm() { Text = $"ФИО Владельца ЛС: {owner_name}, Адрес помещения: {address}" };
+                form.l_id = id_ls;
+                form.p_id = id_premises;
                 form.Show();                
             }
             else MessageBox.Show("Укажите запись из таблицы для заполнения", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Stop);

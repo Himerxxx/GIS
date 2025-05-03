@@ -527,41 +527,42 @@ namespace GIS.SearchForms
             OPY_DG_Fill();
         }
 
-        private void button13_Click(object sender, EventArgs e)
+        private void Entrance_Add_Click(object sender, EventArgs e)
         {
-            var entrance = new Entrance_AF();
-            //entrance.id = mkd_id;
+            string load_query = "SELECT m.ID, a.Type_Street + ' ' + a.Street + ' ' + m.House_Number AS 'Address' FROM Characteristic_MKD m " +
+                "JOIN Address_Book a ON a.ID = m.ID_Address " +
+                "WHERE m.ID = @ID";
+
+            var entrance = new Entrance_AF() { Text = $"Добавление нового подъезда. {house_name}" };
+            entrance.Load_Data(Add_Func(load_query));
+            entrance.save_query = "INSERT INTO Entrance(ID_MKD_Address, " +
+                        "Number_Of_Floors, Year_Of_Construction, Is_Confirmed_Supplier, Entrance_Number) " +
+                        "VALUES(@ID_MKD_Address, @Number_Of_Floors, @Year_Of_Construction, @Is_Confirmed_Supplier, @Entrance_Number)";
+
+            entrance.status = "добавлена";
+            entrance.entranceBindingNavigatorSaveItem.Text = "Сохранить данные";
             DialogResult result = entrance.ShowDialog();
             if (result == DialogResult.Cancel)
                 Entrance_DataGrid_Fill();
         }
 
-        private void Add_Func(string load_query, string save_query, string query_reload, DataGridView dgv, string add_obj)
-        {
-
-            DataTable dt = new DataTable();
+        private DataTable Add_Func(string load_query)
+        {            
             using (SqlConnection connection = new SqlConnection(GIS_Data.connectionString))
             {
                 SqlCommand cmd = new SqlCommand(load_query, connection);
                 cmd.Parameters.AddWithValue("@ID", id_house);
                 SqlDataAdapter da = new SqlDataAdapter(cmd);
+                DataTable dt = new DataTable();
                 da.Fill(dt);
+                return dt;
             }
-
-            var entrance = new Entrance_AF() { Text = $"Добавление нового {add_obj}. {house_name}" };
-            entrance.Load_Data(dt);
-            entrance.save_query = save_query;
-            entrance.status = "добавлена";
-            entrance.entranceBindingNavigatorSaveItem.Text = "Сохранить данные";
-            DialogResult result = entrance.ShowDialog();
-            if (result == DialogResult.Cancel)
-                GIS_Data.SQLFill(query_reload, dgv);
         }
 
         private void button14_Click(object sender, EventArgs e)
         {
             var form = new Premises_AF();
-            form.id = id_house;
+            //form.id = id_house;
             DialogResult result = form.ShowDialog();
             if (result == DialogResult.Cancel)
                 Premises_DataGrid_Fill();
